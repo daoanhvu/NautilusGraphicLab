@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 
 
+import java.util.List;
+
 //import javax.media.opengl.GLCapabilities;
 //import javax.media.opengl.GLProfile;
 import javax.swing.JFrame;
@@ -84,9 +86,9 @@ public class App {
     	//GLProfile profile = GLProfile.getDefault();
     	//GLCapabilities caps = new GLCapabilities(profile);
     	Function f = new Function();
-    	int errorCode = f.jniSetFunctionString("f(x,y)=sin(x)+cos(y)");
+    	int errorCode = f.setString("f(x,y)=sin(x)+cos(y)");
     	
-    	ArrayList<ImageData> list = f.jniGetSpace(new float[]{-2, 2, -2, 2}, .2f);
+    	List<ImageData> list = f.getSpace(new float[]{-2, 2, -2, 2}, .2f);
     	final NLabScene scene = new NLabScene(list);
     	JFrame frame = new JFrame("AWT Window Test");
     	frame.setSize(300, 300);

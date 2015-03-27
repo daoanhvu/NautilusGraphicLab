@@ -228,7 +228,7 @@ public class Token {
 				if(mLeft.height > bounds.getHeight()) {
 					//We increase the font size for 'cos('
 					oldFont = fm.getFont();
-					float newSize = oldFont.getSize() * 1.5f;
+					float newSize = oldFont.getSize() * 1.2f;
 					Font newFont = new Font(oldFont.getName(), oldFont.getStyle(), Math.round(newSize));
 					g.setFont(newFont);
 					bounds = g.getFontMetrics(newFont).getStringBounds("cos(", g);
@@ -352,30 +352,11 @@ public class Token {
 		}
 	}
 	
-	private void drawSQRT(Graphics g, int th, float x, float y, float w, float h, float stroke) {
-		int ix = Math.round(x);
-		int iy = Math.round(y);
-		int xw = Math.round(x + w);
-		int xw13 = Math.round(x + w/3);
-		int yh = Math.round(y - h);
-		int yh2 = Math.round(y - h*2.0f/3);
-		g.drawString(Character.toString((char)0x0000221A), ix, iy);
-		g.drawLine(xw13, yh2, xw, yh2);
-		if(th > 2) {
-//			p.getTextWidths(""+th, widths);
-//			float size = p.getTextSize();
-//			size = w3*size/widths[0];
-//			p.setTextSize(size);
-			g.drawString(""+th,ix, yh2);
-		}
-	}
-	
 	private void drawSQRT(Graphics g, int th, float x, float y, float w, float h) {
 		float w1 = h/2;
 		int ix = Math.round(x);
 		int iy = Math.round(y);
 		int xw = Math.round(x + w);
-		int xw13 = Math.round(x + w/3);
 		int yh = Math.round(y - h);
 		int yh2 = Math.round(y - h*2.0f/3);
 		g.drawLine(ix, yh2, ix + Math.round(w1*2.0f/3), iy);

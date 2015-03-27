@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -91,7 +92,7 @@ class FormulaPane extends JPanel {
 		super.paintComponent(g);
 		//Color bg = getBackground();
 		g.setColor(drawingColor);
-		//testDrawChar(g);
+//		testDrawChar(g);
 		if(mToken != null) {
 			mToken.layout(g, 20, 120, mFont.getSize2D());
 			mToken.draw(g);
@@ -100,10 +101,18 @@ class FormulaPane extends JPanel {
 	
 	private void testDrawChar(Graphics g) {
 		Font oldFont = g.getFont();
+		FontMetrics fm = g.getFontMetrics();
+		int ascent = fm.getAscent();
+		int decent = fm.getDescent();
+		int leading = fm.getLeading();
 		g.setFont(mFont);
-		g.drawString("A", 60, 120);
+		g.drawString("g", 60, 120);
 		
 		g.drawLine(60, 120, 100, 120);
+		
+		g.drawLine(60, 120 + decent, 150, 120 + decent);
+		
+		g.drawLine(60, 120 - ascent, 150, 120 - ascent);
 		
 		g.setFont(oldFont);
 	}

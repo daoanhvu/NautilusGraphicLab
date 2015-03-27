@@ -5,6 +5,7 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
@@ -33,7 +34,7 @@ public class NLabScene extends GLCanvas {
 	short[] indices;
 	int[] buffers;
 	
-	public NLabScene(ArrayList<ImageData> _imageData) {
+	public NLabScene(List<ImageData> _imageData) {
 		imageData = _imageData.get(0);
 		glEventListener = new MyGLEventListener();
 		this.addGLEventListener(glEventListener);

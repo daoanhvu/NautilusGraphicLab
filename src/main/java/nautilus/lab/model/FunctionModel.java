@@ -2,13 +2,14 @@ package nautilus.lab.model;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.List;
 
 import nautilus.lab.graphics.IGraphics;
 import nautilus.lab.graphics.IPaint;
 import nautilus.util.Camera;
 import simplemath.math.Function;
 import simplemath.math.ImageData;
-import static simplemath.common.Constant.NO_ERROR;;
+import static nautilus.lab.formula.Constant.NO_ERROR;
 
 public class FunctionModel extends SingleModel{
 
@@ -17,16 +18,16 @@ public class FunctionModel extends SingleModel{
 	private Color color = new Color(104, 20, 19);
 	private boolean updating = false;
 	float[] boundaries;
-	ArrayList<ImageData> imageData;
-	ArrayList<short[]> indices;
+	List<ImageData> imageData;
+	List<short[]> indices;
 	int loop;
 	
 	public FunctionModel(String strFunction, float[] _boundaries){
 		//initialize testing function
 		function = new Function();
-		if(function.jniSetFunctionString(strFunction) == NO_ERROR){
+		if(function.setString(strFunction) == NO_ERROR){
 			boundaries = _boundaries;
-			imageData = function.jniGetSpace(boundaries, 0.1f);
+			imageData = function.getSpace(boundaries, 0.1f);
 		}else
 			updating = true;
 	}
@@ -45,8 +46,8 @@ public class FunctionModel extends SingleModel{
 	public boolean setFunction(String strFunct, float[] _boundaries){
 		int errorCode;
 		if(function != null )
-			function.jniRelease();
-		errorCode = function.jniSetFunctionString(strFunct);
+			function.release();
+		errorCode = function.setString(strFunct);
 		boundaries = _boundaries;
 		updating = true;
 		if(errorCode == NO_ERROR){
@@ -57,6 +58,6 @@ public class FunctionModel extends SingleModel{
 	
 	public void dispose(){
 		if(function != null )
-			function.jniRelease();
+			function.release();
 	}
 }
