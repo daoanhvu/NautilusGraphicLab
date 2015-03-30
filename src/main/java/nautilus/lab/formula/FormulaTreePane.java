@@ -20,9 +20,7 @@ class FormulaTreeModelListener extends TreeModelEvent {
 	}
 }
 
-class FormulaTreeNode implements MutableTreeNode {
-	
-	private Token mToken;
+class FormulaTreeNode extends Token implements MutableTreeNode {
 	
 	@Override
 	public Enumeration children() {
@@ -62,7 +60,9 @@ class FormulaTreeNode implements MutableTreeNode {
 
 	@Override
 	public boolean isLeaf() {
-		return (mToken.getTokenClass() == TokenClass.BASIC);
+		boolean noLeft = (mLeft==null);
+		boolean noRight = (mRight == null);
+		return ( noLeft && noRight );
 	}
 
 	@Override
@@ -97,8 +97,6 @@ class FormulaTreeNode implements MutableTreeNode {
 
 	@Override
 	public void setUserObject(Object token) {
-		// TODO Auto-generated method stub
-		mToken = (Token)token;
 	}
 	
 }

@@ -71,6 +71,11 @@ public class Parser {
 				case SQRT:
 				case SIN:
 				case COS:
+				case TAN:
+				case ASIN:
+				case ACOS:
+				case ATAN:
+				case LN:
 				case LPAREN:
 					opStack.push(tk);
 					break;
@@ -155,8 +160,9 @@ public class Parser {
 			}
 			break;
 			
-		case MULTIPLY:
+		
 		case DIV:
+		case MULTIPLY:
 		case POWER:
 		case LT:
 		case GT:
@@ -168,10 +174,10 @@ public class Parser {
 			operand2 = postfixList.remove(n-1);
 			operand1 = postfixList.remove(n-2);
 			if(operand2.mTokenClass == TokenClass.COMPOSITE 
-					&& (itm.priority >= operand2.priority) && (operand2.type != DIV) )
+					&& (itm.priority >= operand2.priority) && (itm.type != DIV) )
 				operand2.needParenthese = true;
 			if(operand1.mTokenClass == TokenClass.COMPOSITE 
-					&& (itm.priority >= operand1.priority ) && (operand1.type != DIV))
+					&& (itm.priority >= operand1.priority ) && (itm.type != DIV))
 				operand1.needParenthese = true;
 			itm.setLeft(operand1);
 			itm.setRight(operand2);

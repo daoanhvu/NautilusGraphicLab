@@ -24,6 +24,10 @@ import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 
 public class Token {
+	
+	static final float FUNCTION_FONT_SIZE_FACTOR = 1.1f;
+	static final float ROOT_HEIGHT_FACTOR = 1.02f;
+	
 	int type, column;
 	int priority;
 	float fontSize;
@@ -64,11 +68,11 @@ public class Token {
 		type = _type;
 	}
 	
-	public Token getParent() {
+	public Token getParentAST() {
 		return mParent;
 	}
 
-	public void setParent(Token mParent) {
+	public void setParentAST(Token mParent) {
 		this.mParent = mParent;
 	}
 
@@ -150,7 +154,7 @@ public class Token {
 	public void setLeft(Token tkLeft) {
 		mLeft = tkLeft;
 		if(mLeft != null)
-			mLeft.setParent(this);
+			mLeft.setParentAST(this);
 	}
 	
 	public Token getLeft() {
@@ -160,7 +164,7 @@ public class Token {
 	public void setRight(Token tkRight) {
 		mRight = tkRight;
 		if(mRight != null)
-			mRight.setParent(this);
+			mRight.setParentAST(this);
 	}
 	
 	public Token getRight() {
@@ -179,6 +183,7 @@ public class Token {
 		FontMetrics fm = g.getFontMetrics();
 		Rectangle2D bounds;
 		Font oldFont = null;
+		float posX;
 		x = startX + mSpace;
 		baseline = y = yDraw = startY;
 		if(mTokenClass == TokenClass.BASIC) {
@@ -186,7 +191,8 @@ public class Token {
 			width = (float)bounds.getWidth();
 			height = (float)bounds.getHeight();
 		} else {
-			if(type == DIV) {
+			switch(type) {
+			case DIV:
 				mLeft.layout(g, startX, startY, fSize);
 				mRight.layout(g, startX, startY, fSize);
 				
@@ -213,52 +219,60 @@ public class Token {
 				mLeft.setY(yDraw - 2);
 				
 				//y cua denominator = baseline + 2 + denominator.height
-				mRight.setY(yDraw + mRight.height - fm.getDescent() - fm.getLeading() );
+				mRight.setY(yDraw + mRight.height - mRight.descent - mRight.leading + 2);
 				
 				this.height = mLeft.getHeight() + 2 + mRight.getHeight();
 				//Vi y la bottom line nen toa do y cua phep chia la y cua denominator
 				this.y = mRight.getY();
+				break;
 				
-			} else if(type == COS) {
-				float posX = startX;
+			case SIN:
+			case COS:
+			case TAN:
+			case ASIN:
+			case ACOS:
+			case ATAN:
+				posX = startX;
 				mLeft.layout(g, posX, startY, fSize);
-				bounds = fm.getStringBounds("cos(", g);
+				bounds = fm.getStringBounds(text, g);
 				
 				//check if child of this node is taller than 'cos(' 
 				if(mLeft.height > bounds.getHeight()) {
 					//We increase the font size for 'cos('
 					oldFont = fm.getFont();
-					float newSize = oldFont.getSize() * 1.2f;
+					float newSize = oldFont.getSize() * FUNCTION_FONT_SIZE_FACTOR;
 					Font newFont = new Font(oldFont.getName(), oldFont.getStyle(), Math.round(newSize));
 					g.setFont(newFont);
-					bounds = g.getFontMetrics(newFont).getStringBounds("cos(", g);
+					bounds = g.getFontMetrics(newFont).getStringBounds(text, g);
 				}
-				mLeft.setX(startX + (float)bounds.getWidth());
+				mLeft.setX(startX + (float)bounds.getWidth() + mSpace);
 				this.fontSize = g.getFont().getSize();
 				Rectangle2D bounds1 = g.getFontMetrics().getStringBounds(")", g);
 				width = mLeft.getWidth() + (float)(bounds.getWidth() + bounds1.getWidth());
 				height = (float)(bounds.getHeight() > mLeft.height?bounds.getHeight():mLeft.height);
 				if(oldFont != null)
 					g.setFont(oldFont);
-				
-			} else if(type == SQRT) {
-				float posX = startX;
+				break;
+			case SQRT:
+			case CBRT:
+				posX = startX;
 				mLeft.layout(g, posX, startY, fSize);
 				posX += mLeft.getWidth() + mSpace;
 				width = posX - startX;
-				height = mLeft.getHeight() * 1.05f ;
+				height = mLeft.getHeight() * ROOT_HEIGHT_FACTOR;
 				float newX = x + height/2;
 				float dx = x - newX;
 				width -= dx;
 				mLeft.setX(x + height/2);
 				this.y = mLeft.getY();
 				mLeft.setY(mLeft.y - (fm.getDescent() + fm.getLeading() ) );
-			} else {
+				break;
+			default:
 				if( needParenthese ) {
 					//Hien thi dau mo dong ngoac
 					// tinh width cua dau mo ngoac
 					bounds = fm.getStringBounds("(", g);
-					float posX = startX + (float)bounds.getWidth();
+					posX = startX + (float)bounds.getWidth();
 					mLeft.layout(g, posX, startY, fSize);
 					posX += mLeft.getWidth() + 5;
 					bounds = fm.getStringBounds(text, g);
@@ -266,14 +280,14 @@ public class Token {
 					mRight.layout(g, posX + textWidth + 5, startY, fSize);
 					posX += mRight.getWidth() + textWidth + bounds.getWidth();
 					xDraw = x + mLeft.getWidth() + (float)bounds.getWidth();
-					width = posX - startX + mSpace + (float)bounds.getWidth();
+					width = posX - startX;
 					height = mLeft.getHeight() > mRight.getHeight()? mLeft.getHeight(): mRight.getHeight();
 					this.y = mLeft.getY() > mRight.getY()? mLeft.getY(): mRight.getY();
 				} else {
 					//Trong truong hop day la mot phep toan
 					// + - hoac *
 					
-					float posX = startX;
+					posX = startX;
 					mLeft.layout(g, posX, startY, fSize);
 					posX += mLeft.getWidth() + mSpace;
 					
@@ -282,7 +296,8 @@ public class Token {
 					
 					bounds = fm.getStringBounds(text, g);
 					int textWidth = (int)Math.round(bounds.getWidth());
-					posX += textWidth + mSpace;
+					//posX += textWidth + mSpace;
+					posX += textWidth; //khong cong them space o day vi vao layout() cung se tang len
 					mRight.layout(g, posX, startY, fSize);
 					
 					posX += mRight.getWidth();
@@ -301,7 +316,8 @@ public class Token {
 		if(mTokenClass == TokenClass.BASIC) {
 			g.drawString(text, ix, iy);
 		} else {
-			if(type == DIV) {
+			switch(type) {
+			case DIV:
 				mLeft.draw(g);
 				/*
 				 * */
@@ -309,21 +325,36 @@ public class Token {
 				xwidth = Math.round(x + width);
 				g.drawLine(ix, ilineY, xwidth, ilineY);
 				mRight.draw(g);
-			} else if(type == COS) {
+				break;
+			case SIN:
+			case COS:
+			case TAN:
+			case ASIN:
+			case ACOS:
+			case ATAN:
 				Font oldFont = g.getFont();				
 				Font newFont = new Font(oldFont.getName(), oldFont.getStyle(), Math.round(fontSize));
 				g.setFont(newFont);
-				g.drawString("cos(", ix, iy);
+				g.drawString(text, ix, iy);
 				g.setFont(oldFont);
 				mLeft.draw(g);
 				g.setFont(newFont);
 				g.drawString(")", Math.round(mLeft.x + mLeft.width), iy);
 				g.setFont(oldFont);
-			} else if(type == SQRT) {
+				break;
+			case SQRT:
 				mLeft.draw(g);
 				drawSQRT(g, 2, x, y, width, height);
-				//g.drawString(Character.toString((char)0x0000221A), ix, iy);
-			} else {
+//				Color old = g.getColor();
+//				g.setColor(Color.BLUE);
+//				g.drawRect(ix, Math.round(iy - height), (int)width, (int)height);
+//				g.setColor(old);
+				break;
+			case CBRT:
+				mLeft.draw(g);
+				drawSQRT(g, 3, x, y, width, height);
+				break;
+			default:
 				if(needParenthese) {
 					//Draw for other types
 					int iBaseline = Math.round(mLeft.baseline);

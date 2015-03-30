@@ -7,8 +7,10 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -42,7 +44,9 @@ public class TestFormulaFrame extends JFrame {
 		tfInput = new JTextField(20);
 		//tfInput.setText("a+(c-d/f)/b");
 		//tfInput.setText("a-(c-d/f)");
-		tfInput.setText("sqrt(8)");
+		tfInput.setText("tan(45)/sqrt(40)");
+		//tfInput.setText("sqrt(8+tan(45)/sin(30-sqrt(40)))");
+		//tfInput.setText("sqrt(8)");
 		//tfInput.setText("(t-23/6)/(m+9/6)-a");
 		//tfInput.setText("a/(m+9/6)");
 		btnDraw = new JButton("Draw");
@@ -105,14 +109,28 @@ class FormulaPane extends JPanel {
 		int ascent = fm.getAscent();
 		int decent = fm.getDescent();
 		int leading = fm.getLeading();
+		Rectangle2D bounds;
 		g.setFont(mFont);
-		g.drawString("g", 60, 120);
 		
+		bounds = fm.getStringBounds("gdf", g);
+		
+		g.drawString("gdf", 60, 120);
+		
+		//draw height
+		int startY = 120 - (int)Math.round(bounds.getHeight());
+		g.setColor(Color.BLUE);
+		g.drawLine(60, startY, 100, startY);
+		//g.drawString("height = " + startY, 120, startY+5);
+		
+		g.setColor(Color.RED);
 		g.drawLine(60, 120, 100, 120);
 		
+		g.setColor(Color.CYAN);
 		g.drawLine(60, 120 + decent, 150, 120 + decent);
 		
-		g.drawLine(60, 120 - ascent, 150, 120 - ascent);
+		g.setColor(Color.PINK);
+		//g.drawLine(60, 120 - ascent, 150, 120 - ascent);
+		g.drawLine(60, 120 - ascent + decent , 150, 120 - ascent + decent);
 		
 		g.setFont(oldFont);
 	}
