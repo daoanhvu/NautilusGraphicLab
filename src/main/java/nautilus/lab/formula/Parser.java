@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-import nautilus.lab.formula.Token.TokenClass;
-
 public class Parser {
 	
 	public Token parsing(List<Token> basicTokens) {
@@ -96,7 +94,6 @@ public class Parser {
 				case VARIABLE:
 				case PI_TYPE:
 				case E_TYPE:
-					tk.setTokenClass(TokenClass.BASIC);
 					postfixList.add(tk);
 					break;
 					
@@ -131,15 +128,12 @@ public class Parser {
 			if(n >1) {
 				operand2 = postfixList.remove(n-1);
 				operand1 = postfixList.remove(n-2);
-				if(operand2.mTokenClass == TokenClass.COMPOSITE 
-						&& (itm.priority >= operand2.priority) && (operand2.type != DIV) )
+				if((itm.priority >= operand2.priority) && (operand2.type != DIV) )
 					operand2.needParenthese = true;
-				if(operand1.mTokenClass == TokenClass.COMPOSITE 
-						&& (itm.priority >= operand1.priority ) && (operand1.type != DIV))
+				if((itm.priority >= operand1.priority ) && (operand1.type != DIV))
 					operand1.needParenthese = true;
 				itm.setLeft(operand1);
 				itm.setRight(operand2);
-				itm.setTokenClass(TokenClass.COMPOSITE);
 				postfixList.add(itm);
 			}
 			break;
@@ -147,15 +141,12 @@ public class Parser {
 			if(n >1) {
 				operand2 = postfixList.remove(n-1);
 				operand1 = postfixList.remove(n-2);
-				if(operand2.mTokenClass == TokenClass.COMPOSITE 
-						&& (itm.priority >= operand2.priority) && (operand2.type != DIV) )
+				if((itm.priority >= operand2.priority) && (operand2.type != DIV) )
 					operand2.needParenthese = true;
-				if(operand1.mTokenClass == TokenClass.COMPOSITE 
-						&& (itm.priority >= operand1.priority ) && (operand1.type != DIV))
+				if((itm.priority >= operand1.priority ) && (operand1.type != DIV))
 					operand1.needParenthese = true;
 				itm.setLeft(operand1);
 				itm.setRight(operand2);
-				itm.setTokenClass(TokenClass.COMPOSITE);
 				postfixList.add(itm);
 			}
 			break;
@@ -173,15 +164,12 @@ public class Parser {
 		case LOG:
 			operand2 = postfixList.remove(n-1);
 			operand1 = postfixList.remove(n-2);
-			if(operand2.mTokenClass == TokenClass.COMPOSITE 
-					&& (itm.priority >= operand2.priority) && (itm.type != DIV) )
+			if((itm.priority >= operand2.priority) && (itm.type != DIV) )
 				operand2.needParenthese = true;
-			if(operand1.mTokenClass == TokenClass.COMPOSITE 
-					&& (itm.priority >= operand1.priority ) && (itm.type != DIV))
+			if((itm.priority >= operand1.priority ) && (itm.type != DIV))
 				operand1.needParenthese = true;
 			itm.setLeft(operand1);
 			itm.setRight(operand2);
-			itm.setTokenClass(TokenClass.COMPOSITE);
 			postfixList.add(itm);
 			break;
 			
@@ -193,10 +181,10 @@ public class Parser {
 		case ACOS:
 		case ATAN:
 		case SQRT:
+		case CBRT:
 		case LN:
 			operand1 = postfixList.remove(n-1);
 			itm.setLeft(operand1);
-			itm.setTokenClass(TokenClass.COMPOSITE);
 			postfixList.add(itm);
 			break;
 		}

@@ -16,6 +16,9 @@ import static nautilus.lab.formula.Constant.POWER;
 import static nautilus.lab.formula.Constant.SIN;
 import static nautilus.lab.formula.Constant.SQRT;
 import static nautilus.lab.formula.Constant.TAN;
+import static nautilus.lab.formula.Constant.NUMBER;
+import static nautilus.lab.formula.Constant.PI_TYPE;
+import static nautilus.lab.formula.Constant.E_TYPE;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -26,14 +29,14 @@ import java.awt.geom.Rectangle2D;
 public class Token {
 	
 	static final float FUNCTION_FONT_SIZE_FACTOR = 1.1f;
-	static final float ROOT_HEIGHT_FACTOR = 1.02f;
+	static final float ROOT_HEIGHT_FACTOR = 1.05f;
+	static final float DIVIDER_SPACE = 2f;
 	
 	int type, column;
 	int priority;
 	float fontSize;
 	String text = "";
 	boolean visible = true;
-	TokenClass mTokenClass;
 	
 	Token mParent;
 	Token mLeft;
@@ -49,10 +52,6 @@ public class Token {
 	float baseline;
 	float mSpace = 5;
 	boolean needParenthese = false;
-	
-	public enum TokenClass {
-		BASIC, COMPOSITE
-	}
 	
 	Token() {
 		mParent = null;
@@ -116,16 +115,15 @@ public class Token {
 		float dx = x - _x;
 		x = _x;
 		xDraw = xDraw - dx;
-		if(mTokenClass == TokenClass.COMPOSITE) {
-			float newX;
-			if(mLeft != null){
-				newX = mLeft.x - dx;
-				mLeft.setX(newX);
-			}
-			if(mRight != null){
-				newX = mRight.x - dx;
-				mRight.setX(newX);
-			}
+		
+		float newX;
+		if(mLeft != null){
+			newX = mLeft.x - dx;
+			mLeft.setX(newX);
+		}
+		if(mRight != null){
+			newX = mRight.x - dx;
+			mRight.setX(newX);
 		}
 	}
 	
@@ -138,16 +136,15 @@ public class Token {
 		y = _y;
 		baseline = baseline - dy;
 		yDraw = yDraw - dy;
-		if(mTokenClass == TokenClass.COMPOSITE) {
-			float newY;
-			if(mLeft != null){
-				newY = mLeft.getY() - dy;
-				mLeft.setY(newY);
-			}
-			if(mRight != null){
-				newY = mRight.getY() - dy;
-				mRight.setY(newY);
-			}
+		
+		float newY;
+		if(mLeft != null){
+			newY = mLeft.getY() - dy;
+			mLeft.setY(newY);
+		}
+		if(mRight != null){
+			newY = mRight.getY() - dy;
+			mRight.setY(newY);
 		}
 	}
 	
@@ -171,14 +168,6 @@ public class Token {
 		return mRight;
 	}
 	
-	public void setTokenClass(TokenClass cls) {
-		mTokenClass = cls;
-	}
-	
-	public TokenClass getTokenClass() {
-		return mTokenClass;
-	}
-	
 	public void layout(Graphics g, float startX, float startY, float fSize) {
 		FontMetrics fm = g.getFontMetrics();
 		Rectangle2D bounds;
@@ -186,12 +175,18 @@ public class Token {
 		float posX;
 		x = startX + mSpace;
 		baseline = y = yDraw = startY;
-		if(mTokenClass == TokenClass.BASIC) {
-			bounds = fm.getStringBounds(text, g);
-			width = (float)bounds.getWidth();
-			height = (float)bounds.getHeight();
-		} else {
-			switch(type) {
+		ascent = fm.getAscent();
+		descent = fm.getDescent();
+		leading = fm.getLeading();
+		
+		switch(type) {
+			case NUMBER:
+			case PI_TYPE:
+			case E_TYPE:
+				bounds = fm.getStringBounds(text, g);
+				width = (float)bounds.getWidth();
+				height = (float)bounds.getHeight();
+				break;
 			case DIV:
 				mLeft.layout(g, startX, startY, fSize);
 				mRight.layout(g, startX, startY, fSize);
@@ -200,13 +195,11 @@ public class Token {
 					width = mLeft.getWidth();
 					//set x for denominator
 					float dx = mLeft.getWidth() - mRight.getWidth();
-					//mRight.setX(startX + dx/2);
 					mRight.setX(x + dx/2);
 				} else if(mLeft.getWidth() < mRight.getWidth()) {
 					width = mRight.getWidth();
 					//set x for nominator
 					float dx = mRight.getWidth() - mLeft.getWidth();
-					//mLeft.setX(startX + dx/2);
 					mLeft.setX(x + dx/2);
 				} else {
 					width = mLeft.getWidth();
@@ -215,15 +208,20 @@ public class Token {
 				/* Vi tri cua dau ghach ngang chinh la baseline
 					Y cua nominator = this.baseline - 2
 				 * */
-				yDraw -= fm.getDescent() + fm.getLeading();
-				mLeft.setY(yDraw - 2);
+				yDraw -= fm.getDescent();
+				mLeft.setY(yDraw - fm.getDescent());
 				
-				//y cua denominator = baseline + 2 + denominator.height
-				mRight.setY(yDraw + mRight.height - mRight.descent - mRight.leading + 2);
+				//y cua denominator = yDraw + denominator.height
+				//mRight.setY(yDraw + mRight.height + fm.getDescent());
+				mRight.setY(yDraw + mRight.height);
 				
-				this.height = mLeft.getHeight() + 2 + mRight.getHeight();
+				this.height = mLeft.getHeight() + mRight.getHeight() + fm.getDescent();
+				
 				//Vi y la bottom line nen toa do y cua phep chia la y cua denominator
 				this.y = mRight.getY();
+				this.ascent = mLeft.ascent;
+				this.descent = fm.getDescent();
+				
 				break;
 				
 			case SIN:
@@ -250,6 +248,8 @@ public class Token {
 				Rectangle2D bounds1 = g.getFontMetrics().getStringBounds(")", g);
 				width = mLeft.getWidth() + (float)(bounds.getWidth() + bounds1.getWidth());
 				height = (float)(bounds.getHeight() > mLeft.height?bounds.getHeight():mLeft.height);
+				this.ascent = g.getFontMetrics().getAscent();
+				this.descent = g.getFontMetrics().getDescent();
 				if(oldFont != null)
 					g.setFont(oldFont);
 				break;
@@ -259,13 +259,17 @@ public class Token {
 				mLeft.layout(g, posX, startY, fSize);
 				posX += mLeft.getWidth() + mSpace;
 				width = posX - startX;
-				height = mLeft.getHeight() * ROOT_HEIGHT_FACTOR;
+				//height = mLeft.getHeight() * ROOT_HEIGHT_FACTOR;
+				height = mLeft.getHeight() * ROOT_HEIGHT_FACTOR + fm.getDescent();
 				float newX = x + height/2;
 				float dx = x - newX;
 				width -= dx;
 				mLeft.setX(x + height/2);
 				this.y = mLeft.getY();
-				mLeft.setY(mLeft.y - (fm.getDescent() + fm.getLeading() ) );
+				mLeft.setY(mLeft.y - mLeft.descent);
+				//height += fm.getDescent();
+				descent = 0;
+				leading = fm.getLeading();
 				break;
 			default:
 				if( needParenthese ) {
@@ -305,18 +309,21 @@ public class Token {
 					height = mLeft.getHeight() > mRight.getHeight()? mLeft.getHeight(): mRight.getHeight();
 					this.y = mLeft.getY() > mRight.getY()? mLeft.getY(): mRight.getY();
 				}
-			}
 		}
+		
 	}
 	
 	public void draw(Graphics g) {
 		int ix = Math.round(x);
 		int iy = Math.round(y);
 		int xwidth;
-		if(mTokenClass == TokenClass.BASIC) {
-			g.drawString(text, ix, iy);
-		} else {
-			switch(type) {
+		
+		switch(type) {
+			case NUMBER:
+			case PI_TYPE:
+			case E_TYPE:
+				g.drawString(text, ix, iy);
+				break;
 			case DIV:
 				mLeft.draw(g);
 				/*
@@ -325,6 +332,14 @@ public class Token {
 				xwidth = Math.round(x + width);
 				g.drawLine(ix, ilineY, xwidth, ilineY);
 				mRight.draw(g);
+				
+				//testing
+				Color old = g.getColor();
+				g.setColor(Color.BLUE);
+				g.drawRect(ix, Math.round(iy - height), (int)width, (int)height);
+				g.setColor(old);
+				//testing
+				
 				break;
 			case SIN:
 			case COS:
@@ -332,7 +347,7 @@ public class Token {
 			case ASIN:
 			case ACOS:
 			case ATAN:
-				Font oldFont = g.getFont();				
+				Font oldFont = g.getFont();
 				Font newFont = new Font(oldFont.getName(), oldFont.getStyle(), Math.round(fontSize));
 				g.setFont(newFont);
 				g.drawString(text, ix, iy);
@@ -341,6 +356,14 @@ public class Token {
 				g.setFont(newFont);
 				g.drawString(")", Math.round(mLeft.x + mLeft.width), iy);
 				g.setFont(oldFont);
+				
+				//testing
+//				Color old = g.getColor();
+//				g.setColor(Color.BLUE);
+//				g.drawRect(ix, Math.round(iy - height), (int)width, (int)height);
+//				g.setColor(old);
+				//testing
+				
 				break;
 			case SQRT:
 				mLeft.draw(g);
@@ -373,14 +396,13 @@ public class Token {
 					mRight.draw(g);
 					xwidth = Math.round(x + width);
 				}
-			}
+		}
 		
 			//For testing purpose
 //			Color old = g.getColor();
 //			g.setColor(Color.BLUE);
 //			g.drawRect(ix, Math.round(iy - height), (int)width, (int)height);
 //			g.setColor(old);
-		}
 	}
 	
 	private void drawSQRT(Graphics g, int th, float x, float y, float w, float h) {
@@ -399,17 +421,24 @@ public class Token {
 //			float size = p.getTextSize();
 //			size = w3*size/widths[0];
 //			p.setTextSize(size);
+			
+			Font oldFont = g.getFont();
+			int newFontSize = oldFont.getSize()/2;
+			Font newFont = new Font(oldFont.getName(), oldFont.getStyle(), newFontSize);
+			g.setFont(newFont);
 			g.drawString(""+th,ix, yh2);
+			g.setFont(oldFont);
 		}
 	}
 	
 	public void moveOffsetY(float dy) {
 		baseline += dy;
-		if(mTokenClass == TokenClass.BASIC) {
-			y += dy;
-		} else {
-			y += dy;	
+		y += dy;
+		if(mLeft != null) {
 			mLeft.moveOffsetY(dy);
+		}
+		
+		if(mRight != null) {
 			mRight.moveOffsetY(dy);
 		}
 	}

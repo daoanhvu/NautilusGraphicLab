@@ -7,8 +7,6 @@ import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import nautilus.lab.formula.Token.TokenClass;
-
 public class FormulaTreePane extends JPanel {
 
 }

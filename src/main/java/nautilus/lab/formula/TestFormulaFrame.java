@@ -44,7 +44,12 @@ public class TestFormulaFrame extends JFrame {
 		tfInput = new JTextField(20);
 		//tfInput.setText("a+(c-d/f)/b");
 		//tfInput.setText("a-(c-d/f)");
-		tfInput.setText("tan(45)/sqrt(40)");
+		//tfInput.setText("tan(45)/sqrt(40)");
+		//tfInput.setText("sin(30-sqrt(40))");
+		//tfInput.setText("123-tan(45)/sin(30-sqrt(40))");
+		//tfInput.setText("sqrt(78)/a");
+		tfInput.setText("sqrt(sqrt(78)/a)"); //<= loi
+		//tfInput.setText("sqrt(sqrt(40))");
 		//tfInput.setText("sqrt(8+tan(45)/sin(30-sqrt(40)))");
 		//tfInput.setText("sqrt(8)");
 		//tfInput.setText("(t-23/6)/(m+9/6)-a");
@@ -56,7 +61,7 @@ public class TestFormulaFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				String strForumla = tfInput.getText();
 				mLexer.setText(strForumla);
-				mLexer.lexicalAnalysis(false, 0);
+				//mLexer.lexicalAnalysis(false, 0);
 				Token root = formulaLayout.parsing(mLexer);
 				cvFormula.setToken(root);
 				//cvFormula.invalidate();
@@ -97,8 +102,9 @@ class FormulaPane extends JPanel {
 		//Color bg = getBackground();
 		g.setColor(drawingColor);
 //		testDrawChar(g);
+		g.setColor(drawingColor);
 		if(mToken != null) {
-			mToken.layout(g, 20, 120, mFont.getSize2D());
+			mToken.layout(g, 20, 140, mFont.getSize2D());
 			mToken.draw(g);
 		}
 	}
@@ -112,25 +118,30 @@ class FormulaPane extends JPanel {
 		Rectangle2D bounds;
 		g.setFont(mFont);
 		
-		bounds = fm.getStringBounds("gdf", g);
+		int x = 10;
+		int y = 50;
 		
-		g.drawString("gdf", 60, 120);
+		bounds = fm.getStringBounds("Ycos(", g);
 		
-		//draw height
-		int startY = 120 - (int)Math.round(bounds.getHeight());
-		g.setColor(Color.BLUE);
-		g.drawLine(60, startY, 100, startY);
-		//g.drawString("height = " + startY, 120, startY+5);
+		g.drawString("Ycos(", x, y);
 		
-		g.setColor(Color.RED);
-		g.drawLine(60, 120, 100, 120);
+		g.drawRect(x, y-(int)bounds.getHeight(), (int)bounds.getWidth(), (int)bounds.getHeight());
 		
-		g.setColor(Color.CYAN);
-		g.drawLine(60, 120 + decent, 150, 120 + decent);
-		
-		g.setColor(Color.PINK);
-		//g.drawLine(60, 120 - ascent, 150, 120 - ascent);
-		g.drawLine(60, 120 - ascent + decent , 150, 120 - ascent + decent);
+//		//draw height
+//		int startY = y - (int)Math.round(bounds.getHeight());
+//		g.setColor(Color.BLUE);
+//		//g.drawLine(x, startY, x+50, startY);
+//		//g.drawString("height = " + startY, 120, startY+5);
+//		
+//		g.setColor(Color.RED);
+//		//g.drawLine(x, y, 100, y);
+//		
+//		g.setColor(Color.PINK);
+//		g.drawLine(x, y - ascent, x+100, y - ascent);
+//		//g.drawLine(x, y - ascent + decent , x+100, y - ascent + decent);
+//		
+//		g.setColor(Color.CYAN);
+//		g.drawLine(x, y + decent, x+100, y + decent);
 		
 		g.setFont(oldFont);
 	}
