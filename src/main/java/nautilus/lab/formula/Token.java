@@ -19,6 +19,8 @@ import static nautilus.lab.formula.Constant.TAN;
 import static nautilus.lab.formula.Constant.NUMBER;
 import static nautilus.lab.formula.Constant.PI_TYPE;
 import static nautilus.lab.formula.Constant.E_TYPE;
+import static nautilus.lab.formula.Constant.NAME;
+import static nautilus.lab.formula.Constant.VARIABLE;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -181,6 +183,8 @@ public class Token {
 		
 		switch(type) {
 			case NUMBER:
+			case NAME:
+			case VARIABLE:
 			case PI_TYPE:
 			case E_TYPE:
 				bounds = fm.getStringBounds(text, g);
@@ -319,6 +323,8 @@ public class Token {
 		int xwidth;
 		
 		switch(type) {
+		case NAME:
+		case VARIABLE:
 			case NUMBER:
 			case PI_TYPE:
 			case E_TYPE:
