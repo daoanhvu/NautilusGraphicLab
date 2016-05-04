@@ -22,6 +22,7 @@ import javax.swing.SwingUtilities;
 import simplemath.math.Function;
 import simplemath.math.ImageData;
 import nautilus.lab.component.LabFrame;
+import nautilus.lab.component.MapBuilderFrame;
 import nautilus.lab.formula.TestFormulaFrame;
 import nautilus.lab.jogl.NLabScene;
 
@@ -32,7 +33,9 @@ public class App {
     public static void main( String[] args ){
     	//startJogl();
     	//buildIndicesForTriangleStrip(3, 3);
-    	testFormula();
+//    	startAWT();
+    	startMapBuilderFrame();
+//    	testFormula();
     }
     
     static void testFormula() {
@@ -110,6 +113,11 @@ public class App {
     
     public static void startAWT(){
     	LabFrame frm = new LabFrame();
+		frm.setVisible(true);
+    }
+    
+    public static void startMapBuilderFrame(){
+    	MapBuilderFrame frm = new MapBuilderFrame();
 		frm.setVisible(true);
     }
 }
