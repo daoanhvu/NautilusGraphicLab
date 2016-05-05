@@ -3,6 +3,7 @@ package nautilus.lab.component;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.GradientPaint;
+import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Toolkit;
 import java.awt.geom.AffineTransform;
@@ -39,16 +40,7 @@ public abstract class AbstractStrategyCanvas extends Canvas {
 		timer = new Timer(); // used for the render thread
 	}
 	
-	public abstract void render();
-	
-	private void internalRender() {
-		render();
-		
-		// flip/draw the backbuffer to the canvas component.
-		strategy.show();
-		// synchronize with the display refresh rate.
-		Toolkit.getDefaultToolkit().sync();
-	}
+	public abstract void render(Graphics2D g2);
 	
 	public void setup() {
 		// create the background gradient paint object.
@@ -92,7 +84,23 @@ public abstract class AbstractStrategyCanvas extends Canvas {
 				// save the current time
 				//lasttime = time;
 
-				internalRender();
+				//internalRender();
+				//==========Start gender==============
+				Graphics2D g2 = (Graphics2D)strategy.getDrawGraphics();
+				g2.setPaint(backgroundGradient);
+				g2.fillRect(0, 0, getWidth(), getHeight());
+				
+				render(g2);
+				
+				// properly dispose of the backbuffer graphics object. Release resources
+				// and cleanup.
+				g2.dispose();
+				
+				// flip/draw the backbuffer to the canvas component.
+				strategy.show();
+				// synchronize with the display refresh rate.
+				Toolkit.getDefaultToolkit().sync();
+				//==========End gender==============
 			}
 		};
 

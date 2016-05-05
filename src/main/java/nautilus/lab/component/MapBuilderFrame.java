@@ -1,6 +1,7 @@
 package nautilus.lab.component;
 
 import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.MenuItem;
@@ -13,17 +14,20 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.awt.MenuBar;
 import java.awt.Menu;
 import java.io.File;
 import java.io.IOException;
-
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
 import nautilus.lab.graphics.IGraphics;
 import nautilus.lab.graphics.IPaint;
 import nautilus.lab.graphics.NLabGraphics;
+import nautilus.util.ImageOpenFilter;
 
 
 public class MapBuilderFrame extends Frame {
@@ -41,6 +45,14 @@ public class MapBuilderFrame extends Frame {
 	private MapCanvas canvas;
 	private CoordinatorInfoPane infoPane;
 	private CommandPane commandPane;
+	
+	short[][] mapData = {
+			{0, 1, 3, 5, 4, 4, 0, 0},
+			{2, 2, 1, 0, 3, 0, 0, 1},
+			{0, 0, 0, 0, 2, 2, 0, 0},
+			{0, 0, 0, 0, 1, 2, 0, 1},
+			{0, 0, 2, 7, 5, 4, 1, 0}
+	};
 	
 	public MapBuilderFrame(){
 		super("Nautilus Lab 1.0 - Map builder");
@@ -97,6 +109,9 @@ public class MapBuilderFrame extends Frame {
 		initToolBar();
 		
 		canvas = new MapCanvas();
+		canvas.loadFromFolder("D:\\projects\\TankGame\\artwork");
+		canvas.setMapData(mapData);
+		
 		this.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent we){
 				infoPane.setControlListener(null);
@@ -153,6 +168,18 @@ public class MapBuilderFrame extends Frame {
 		private boolean isShowCtxMenu = false;	
 		private int preMouseX = 0, preMouseY = 0;
 		
+		final ImageOpenFilter mImageFilter = new ImageOpenFilter("mapTile");
+		
+		int X0 = 20;
+		int Y0 = 50;
+		
+		private final List<BufferedImage> images = new ArrayList<>();
+		short[][] mapData;
+		int rowCount;
+		int colCount;
+		int tileWidth;
+		int tileHeight;
+		
 		private IDrawPaneChangeListener drawPaneListener = null;
 		
 		public MapCanvas() {
@@ -161,6 +188,39 @@ public class MapBuilderFrame extends Frame {
 			setPreferredSize(new Dimension(850, 450));
 			//initImageInfoPane();
 			graphics = new NLabGraphics();
+		}
+		
+		public void loadFromFolder(String pathFolder) {
+			File[] imageFiles;
+			BufferedImage img;
+			try {
+				File folder = new File(pathFolder);
+				imageFiles = folder.listFiles(mImageFilter);
+				for(File f: imageFiles) {
+					img = ImageIO.read(f);
+					images.add(img);
+				}
+					
+				tileWidth = images.get(0).getWidth();
+				tileHeight = images.get(0).getHeight();
+				
+			}catch(IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+		
+		public void setMapData(short[][] mapD) {
+			mapData = mapD;
+			rowCount = mapData[0].length;
+			colCount = mapData.length;
+		}
+		
+		@Override
+		public void stop() {
+			super.stop();
+			for(BufferedImage img: images) {
+				img.flush();
+			}
 		}
 		
 		private void setListeners() {
@@ -239,10 +299,29 @@ public class MapBuilderFrame extends Frame {
 		}
 
 		@Override
-		public void render() {
+		public void render(Graphics2D g2) {
 			// TODO Auto-generated method stub
+			int x, y, i, j;
 			
+			for(i=0; i<images.size(); i++) {
+				for(j=0; j<rowCount; j++) {
+					x = getWidth()-10 - ((i % 2 + 1) * tileWidth + (i%2)*5 );
+					y = i/2 * tileHeight + 10 + (i/2)*5;
+					g2.drawImage(images.get(i), x, y, null);
+				}
+			}
 			
+			for(i=0; i<rowCount; i++) {
+				for(j=0; j<colCount; j++) {
+					x = i * tileWidth + X0;
+					y = j * tileHeight + Y0;
+					g2.drawImage(images.get(mapData[j][i]), x, y, null);
+				}
+			}
+			
+			if(isMousePressed) {
+				g2.drawImage(images.get(0), preMouseX, preMouseY, null);
+			}
 		}
 
 		@Override

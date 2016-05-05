@@ -112,11 +112,8 @@ public class StrategyCanvas extends AbstractStrategyCanvas implements IControlLi
 		g2.drawImage(imageInfoPane, x, y, null);
 	}
 	
-	public void render() {
-		Graphics2D g2 = (Graphics2D)strategy.getDrawGraphics();
-		g2.setPaint(backgroundGradient);
-		g2.fillRect(0, 0, getWidth(), getHeight());
-		
+	@Override
+	public void render(Graphics2D g2) {
 		((NLabGraphics)graphics).setGraphics(g2);
 
 		// TODO: Draw your game world, or scene or anything else here.
@@ -128,9 +125,6 @@ public class StrategyCanvas extends AbstractStrategyCanvas implements IControlLi
 			g2.drawImage(imageCtxMenu, preMouseX, preMouseY, null);
 
 		drawInfoPane(g2);
-		// properly dispose of the backbuffer graphics object. Release resources
-		// and cleanup.
-		g2.dispose();
 	}
 	
 //	private double[] rotM1 = new double[16];
