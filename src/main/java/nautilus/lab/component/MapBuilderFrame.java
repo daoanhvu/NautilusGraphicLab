@@ -3,6 +3,7 @@ package nautilus.lab.component;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
@@ -47,11 +48,11 @@ public class MapBuilderFrame extends Frame {
 	private CommandPane commandPane;
 	
 	short[][] mapData = {
-			{0, 1, 3, 5, 4, 4, 0, 0},
-			{2, 2, 1, 0, 3, 0, 0, 1},
-			{0, 0, 0, 0, 2, 2, 0, 0},
-			{0, 0, 0, 0, 1, 2, 0, 1},
-			{0, 0, 2, 7, 5, 4, 1, 0}
+			{0, 1, 3, 5, 4, 4, 0, 0, 0, 0, 0, 0, 0},
+			{2, 2, 1, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0}
 	};
 	
 	public MapBuilderFrame(){
@@ -109,7 +110,8 @@ public class MapBuilderFrame extends Frame {
 		initToolBar();
 		
 		canvas = new MapCanvas();
-		canvas.loadFromFolder("D:\\projects\\TankGame\\artwork");
+		//canvas.loadFromFolder("D:\\projects\\TankGame\\artwork");
+		canvas.loadFromFolder("D:\\projects\\my-tank-game\\artwork");
 		canvas.setMapData(mapData);
 		
 		this.addWindowListener(new WindowAdapter(){
@@ -167,11 +169,17 @@ public class MapBuilderFrame extends Frame {
 		private boolean isMousePressed = false;
 		private boolean isShowCtxMenu = false;	
 		private int preMouseX = 0, preMouseY = 0;
+		int selectedTile = -1;
+		int selectedTileRow;
+		int selectedTileCol;
 		
 		final ImageOpenFilter mImageFilter = new ImageOpenFilter("mapTile");
 		
-		int X0 = 20;
-		int Y0 = 50;
+		int mapX0 = 20;
+		int mapY0 = 50;
+		
+		int tilePaneX0;
+		int tilePaneY0;
 		
 		private final List<BufferedImage> images = new ArrayList<>();
 		short[][] mapData;
@@ -179,6 +187,9 @@ public class MapBuilderFrame extends Frame {
 		int colCount;
 		int tileWidth;
 		int tileHeight;
+		
+		final int MARGIN = 10;
+		static final int TILE_GAP = 2;
 		
 		private IDrawPaneChangeListener drawPaneListener = null;
 		
@@ -188,6 +199,9 @@ public class MapBuilderFrame extends Frame {
 			setPreferredSize(new Dimension(850, 450));
 			//initImageInfoPane();
 			graphics = new NLabGraphics();
+			
+			tileWidth = 0;
+			tileHeight = 0;
 		}
 		
 		public void loadFromFolder(String pathFolder) {
@@ -203,6 +217,11 @@ public class MapBuilderFrame extends Frame {
 					
 				tileWidth = images.get(0).getWidth();
 				tileHeight = images.get(0).getHeight();
+				
+				if((this.getWidth()>0) && (this.getHeight() > 0)) {
+					tilePaneX0 = getWidth() - (2 * tileWidth + TILE_GAP*4+1);
+					tilePaneY0 = 50;
+				}
 				
 			}catch(IOException ex) {
 				ex.printStackTrace();
@@ -243,18 +262,58 @@ public class MapBuilderFrame extends Frame {
 					// TODO Auto-generated method stub
 					
 				}
-
+				
+				/**
+				 * @TODO please rework on formulas in this method
+				 */
 				@Override
 				public void mousePressed(MouseEvent evt) {
 					isMousePressed = true;
 					preMouseX = evt.getX();
 					preMouseY = evt.getY();
+					int temp;
+					//test if mouse is on a tile in panel
+					if( (preMouseX > tilePaneX0) && (preMouseX < tilePaneX0 + 2*tileWidth + TILE_GAP*4+1) ) {
+						if( (preMouseY > tilePaneY0) && 
+								(preMouseY < tilePaneY0 + tileHeight*(images.size()/2+1) + TILE_GAP*2*(images.size()/2+1)) ) {
+							//drawPaneListener.
+							int offx = preMouseX - tilePaneX0;
+							int c = offx / (tileWidth + 2*TILE_GAP);
+							int offy = preMouseY - tilePaneY0; 
+							int r = offy / (tileHeight + TILE_GAP);
+							temp = r * 2 + c;
+							if(temp < 15) {
+								selectedTileRow = r;
+								selectedTileCol = c;
+								selectedTile = temp;
+							}
+							System.out.println("row: " + r + " column: " + c + "; Selected Tile: " + selectedTile);
+						}
+					}
 					
 				}
 
 				@Override
-				public void mouseReleased(MouseEvent arg0) {
+				public void mouseReleased(MouseEvent me) {
 					isMousePressed = false;
+					
+					int mx = me.getX();
+					int my = me.getY();
+					
+					int temp;
+					if( (mx > mapX0) && (mx < mapX0 + colCount*tileWidth) ) {
+						if( (my > mapY0) && (my < mapY0 + tileHeight*rowCount) ) {
+							//drawPaneListener.
+							int offx = mx - mapX0;
+							int c = offx / tileWidth;
+							int offy = my - mapY0; 
+							int r = offy / tileHeight;
+							//temp = r * rowCount + c;
+							mapData[r][c] = (short)selectedTile;
+							
+//							System.out.println("row: " + r + " column: " + c + "; Selected Tile: " + selectedTile);
+						}
+					}
 				}
 			});
 			
@@ -283,6 +342,11 @@ public class MapBuilderFrame extends Frame {
 					
 					public void  componentResized(ComponentEvent e){
 						
+						if((e.getComponent().getWidth()>0) && (e.getComponent().getHeight() > 0)
+								&& (tileWidth>0) && (tileHeight>0)) {
+							tilePaneX0 = e.getComponent().getWidth() - (2 * tileWidth + TILE_GAP*4+1 + MARGIN);
+							tilePaneY0 = 50;	
+						}
 					}
 					
 					public void  componentShown(ComponentEvent e){
@@ -302,25 +366,32 @@ public class MapBuilderFrame extends Frame {
 		public void render(Graphics2D g2) {
 			// TODO Auto-generated method stub
 			int x, y, i, j;
-			
+			int gapx2 = TILE_GAP * 2;
 			for(i=0; i<images.size(); i++) {
-				for(j=0; j<rowCount; j++) {
-					x = getWidth()-10 - ((i % 2 + 1) * tileWidth + (i%2)*5 );
-					y = i/2 * tileHeight + 10 + (i/2)*5;
-					g2.drawImage(images.get(i), x, y, null);
-				}
+				x = tilePaneX0 + ((i % 2) * tileWidth + (i%2)*TILE_GAP + (i%2)*gapx2 + (i%2) );
+				y = tilePaneY0 + i/2 * tileHeight + (i/2)*TILE_GAP;
+				g2.drawImage(images.get(i), x, y, null);
+			}
+			Color oldC = g2.getColor();
+			Color newC = Color.darkGray;
+			if(selectedTile > 0) {
+				x = tilePaneX0 + selectedTileCol*tileWidth + TILE_GAP;
+				y = tilePaneY0 + selectedTileRow * tileHeight + TILE_GAP;
+				g2.setColor(newC);
+				g2.drawRect(x, y, tileWidth, tileHeight);
+				g2.setColor(oldC);
 			}
 			
 			for(i=0; i<rowCount; i++) {
 				for(j=0; j<colCount; j++) {
-					x = i * tileWidth + X0;
-					y = j * tileHeight + Y0;
+					x = i * tileWidth + mapX0;
+					y = j * tileHeight + mapY0;
 					g2.drawImage(images.get(mapData[j][i]), x, y, null);
 				}
 			}
 			
-			if(isMousePressed) {
-				g2.drawImage(images.get(0), preMouseX, preMouseY, null);
+			if(isMousePressed && (selectedTile>=0) ) {
+				g2.drawImage(images.get(selectedTile), preMouseX, preMouseY, null);
 			}
 		}
 
