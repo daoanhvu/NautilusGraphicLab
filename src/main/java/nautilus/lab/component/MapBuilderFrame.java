@@ -3,6 +3,7 @@ package nautilus.lab.component;
 import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.MenuItem;
@@ -18,7 +19,9 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.MenuBar;
 import java.awt.Menu;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +50,7 @@ public class MapBuilderFrame extends Frame {
 	private CoordinatorInfoPane infoPane;
 	private CommandPane commandPane;
 	
-	short[][] mapData = {
+	int[][] mapData = {
 			{0, 1, 3, 5, 4, 4, 0, 0, 0, 0, 0, 0, 0},
 			{2, 2, 1, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0},
 			{0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0},
@@ -110,8 +113,8 @@ public class MapBuilderFrame extends Frame {
 		initToolBar();
 		
 		canvas = new MapCanvas();
-		//canvas.loadFromFolder("D:\\projects\\TankGame\\artwork");
-		canvas.loadFromFolder("D:\\projects\\my-tank-game\\artwork");
+		canvas.loadFromFolder("D:\\projects\\TankGame\\artwork");
+//		canvas.loadFromFolder("D:\\projects\\my-tank-game\\artwork");
 		canvas.setMapData(mapData);
 		
 		this.addWindowListener(new WindowAdapter(){
@@ -174,15 +177,23 @@ public class MapBuilderFrame extends Frame {
 		int selectedTileCol;
 		
 		final ImageOpenFilter mImageFilter = new ImageOpenFilter("mapTile");
+		final Object mutex = new Object();
+		
+		BufferedImage mapImage;
+		Canvas mapImageCanvas;
 		
 		int mapX0 = 20;
 		int mapY0 = 50;
+		int viewportWidth;
+		int viewportHeight;
+		int viewOffsX;
+		int viewOffsY;
 		
 		int tilePaneX0;
 		int tilePaneY0;
 		
 		private final List<BufferedImage> images = new ArrayList<>();
-		short[][] mapData;
+		int[][] mapData;
 		int rowCount;
 		int colCount;
 		int tileWidth;
@@ -228,10 +239,41 @@ public class MapBuilderFrame extends Frame {
 			}
 		}
 		
-		public void setMapData(short[][] mapD) {
-			mapData = mapD;
-			rowCount = mapData[0].length;
-			colCount = mapData.length;
+		public void setMapData(int[][] mapD) {
+			synchronized(mutex) {
+				mapData = mapD;
+				colCount = mapData[0].length;
+				rowCount = mapData.length;
+				
+				if(mapImage != null)
+					mapImage.flush();
+			}
+		}
+		
+		public void saveMap(String filename) {
+			DataOutputStream dos = null;
+			int i, j;
+			try {
+				dos= new DataOutputStream(new FileOutputStream(new File(filename)));
+				dos.writeInt(rowCount);
+				dos.writeInt(colCount);
+				synchronized(mutex) {
+					for(i=0; i<colCount; i++) {
+						for(j=0; j<rowCount; j++) {
+							dos.write(mapData[j][i]);
+						}
+					}
+				}
+				dos.flush();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} finally {
+				try {
+					if(dos != null) dos.close();
+				}catch(IOException ex1){
+					ex1.printStackTrace();
+				}
+			}
 		}
 		
 		@Override
@@ -240,6 +282,9 @@ public class MapBuilderFrame extends Frame {
 			for(BufferedImage img: images) {
 				img.flush();
 			}
+			
+			if(mapImage != null)
+				mapImage.flush();
 		}
 		
 		private void setListeners() {
@@ -300,7 +345,6 @@ public class MapBuilderFrame extends Frame {
 					int mx = me.getX();
 					int my = me.getY();
 					
-					int temp;
 					if( (mx > mapX0) && (mx < mapX0 + colCount*tileWidth) ) {
 						if( (my > mapY0) && (my < mapY0 + tileHeight*rowCount) ) {
 							//drawPaneListener.
@@ -308,8 +352,10 @@ public class MapBuilderFrame extends Frame {
 							int c = offx / tileWidth;
 							int offy = my - mapY0; 
 							int r = offy / tileHeight;
-							//temp = r * rowCount + c;
-							mapData[r][c] = (short)selectedTile;
+							
+							synchronized(mutex) {
+								mapData[r][c] = (short)selectedTile;
+							}
 							
 //							System.out.println("row: " + r + " column: " + c + "; Selected Tile: " + selectedTile);
 						}
@@ -365,28 +411,40 @@ public class MapBuilderFrame extends Frame {
 		@Override
 		public void render(Graphics2D g2) {
 			// TODO Auto-generated method stub
-			int x, y, i, j;
+			int x, y, i, j, col, row;
 			int gapx2 = TILE_GAP * 2;
 			for(i=0; i<images.size(); i++) {
-				x = tilePaneX0 + ((i % 2) * tileWidth + (i%2)*TILE_GAP + (i%2)*gapx2 + (i%2) );
+				col = i % 2;
+				x = tilePaneX0 + TILE_GAP + 1 + (i%2)*(2*TILE_GAP + tileWidth + 1);
+				//x = tilePaneX0 + ((i % 2) * tileWidth + (i%2)*TILE_GAP + (i%2)*gapx2 + (i%2) );
 				y = tilePaneY0 + i/2 * tileHeight + (i/2)*TILE_GAP;
 				g2.drawImage(images.get(i), x, y, null);
 			}
 			Color oldC = g2.getColor();
-			Color newC = Color.darkGray;
+			Color newC = Color.BLUE;
 			if(selectedTile > 0) {
-				x = tilePaneX0 + selectedTileCol*tileWidth + TILE_GAP;
-				y = tilePaneY0 + selectedTileRow * tileHeight + TILE_GAP;
+				x = tilePaneX0 + TILE_GAP + (selectedTileCol % 2) * (2 * TILE_GAP + tileWidth + 1);
+				y = tilePaneY0 + selectedTileRow * (tileHeight + TILE_GAP);
 				g2.setColor(newC);
-				g2.drawRect(x, y, tileWidth, tileHeight);
+				g2.drawRect(x, y, tileWidth+1, tileHeight+1);
 				g2.setColor(oldC);
 			}
 			
-			for(i=0; i<rowCount; i++) {
-				for(j=0; j<colCount; j++) {
+			synchronized(mutex) {
+				g2.drawImage(mapImage, mapX0, mapY0, 
+						mapX0 + viewportWidth, mapY0 + viewportHeight,
+						viewOffsX, viewOffsY,
+						mapImage.getWidth() - viewOffsX, mapImage.getHeight() - viewOffsY,
+						null);
+			}
+			
+			for(i=0; i<colCount; i++) {
+				for(j=0; j<rowCount; j++) {
 					x = i * tileWidth + mapX0;
 					y = j * tileHeight + mapY0;
-					g2.drawImage(images.get(mapData[j][i]), x, y, null);
+					synchronized(mutex) {
+						g2.drawImage(images.get(mapData[j][i]), x, y, null);
+					}
 				}
 			}
 			
