@@ -51,12 +51,29 @@ public class MapBuilderFrame extends Frame {
 	private CommandPane commandPane;
 	
 	int[][] mapData = {
-			{0, 1, 3, 5, 4, 4, 0, 0, 0, 0, 0, 0, 0},
-			{2, 2, 1, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0},
-			{0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0},
-			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0}
+			{0, 1, 3, 5, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{2, 2, 1, 0, 3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 2, 7, 5, 4, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 1, 3, 5, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 1, 3, 5, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 1, 3, 5, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 	};
+	
+//	int[][] mapData = {
+//			{0}
+//	};
 	
 	public MapBuilderFrame(){
 		super("Nautilus Lab 1.0 - Map builder");
@@ -113,8 +130,8 @@ public class MapBuilderFrame extends Frame {
 		initToolBar();
 		
 		canvas = new MapCanvas();
-		canvas.loadFromFolder("D:\\projects\\TankGame\\artwork");
-//		canvas.loadFromFolder("D:\\projects\\my-tank-game\\artwork");
+//		canvas.loadFromFolder("D:\\projects\\TankGame\\artwork");
+		canvas.loadFromFolder("D:\\projects\\my-tank-game\\artwork");
 		canvas.setMapData(mapData);
 		
 		this.addWindowListener(new WindowAdapter(){
@@ -180,12 +197,12 @@ public class MapBuilderFrame extends Frame {
 		final Object mutex = new Object();
 		
 		BufferedImage mapImage;
-		Canvas mapImageCanvas;
+		Graphics2D mapImageGraphics;
 		
 		int mapX0 = 20;
 		int mapY0 = 50;
-		int viewportWidth;
-		int viewportHeight;
+		int viewportWidth = 800;
+		int viewportHeight = 520;
 		int viewOffsX;
 		int viewOffsY;
 		
@@ -240,13 +257,35 @@ public class MapBuilderFrame extends Frame {
 		}
 		
 		public void setMapData(int[][] mapD) {
+			int i, j, x, y;
 			synchronized(mutex) {
 				mapData = mapD;
 				colCount = mapData[0].length;
 				rowCount = mapData.length;
 				
-				if(mapImage != null)
+				if(mapImage != null) {
 					mapImage.flush();
+					mapImageGraphics.dispose();
+				}
+				
+				int mapWidth = Math.max(colCount * tileWidth, viewportWidth);
+				int mapHeight = Math.max(rowCount * tileHeight, viewportHeight);
+				//mapImage = new BufferedImage(colCount * tileWidth, rowCount * tileHeight, BufferedImage.TYPE_INT_RGB);
+				mapImage = new BufferedImage(mapWidth, mapHeight, BufferedImage.TYPE_INT_RGB);
+				mapImageGraphics = mapImage.createGraphics();
+				viewOffsX = 0;
+				viewOffsY = 0;
+				
+				for(i=0; i<colCount; i++) {
+					for(j=0; j<rowCount; j++) {
+						x = i * tileWidth;
+						y = j * tileHeight;
+						synchronized(mutex) {
+							mapImageGraphics.drawImage(images.get(mapData[j][i]), x, y, null);
+							
+						}
+					}
+				}
 			}
 		}
 		
@@ -340,21 +379,23 @@ public class MapBuilderFrame extends Frame {
 
 				@Override
 				public void mouseReleased(MouseEvent me) {
-					isMousePressed = false;
-					
 					int mx = me.getX();
 					int my = me.getY();
-					
-					if( (mx > mapX0) && (mx < mapX0 + colCount*tileWidth) ) {
-						if( (my > mapY0) && (my < mapY0 + tileHeight*rowCount) ) {
+					isMousePressed = false;
+					//check if mouse is in viewport
+					if( (mx > mapX0) && (mx < viewportWidth) ) {
+						if( (my > mapY0) && (my < viewportHeight) ) {
 							//drawPaneListener.
-							int offx = mx - mapX0;
+							int offx = viewOffsX + mx - mapX0;
 							int c = offx / tileWidth;
-							int offy = my - mapY0; 
+							int offy = viewOffsX + my - mapY0; 
 							int r = offy / tileHeight;
 							
 							synchronized(mutex) {
+								offx = c * tileWidth;
+								offy = r * tileHeight;
 								mapData[r][c] = (short)selectedTile;
+								mapImageGraphics.drawImage(images.get(mapData[r][c]), offx, offy, null);
 							}
 							
 //							System.out.println("row: " + r + " column: " + c + "; Selected Tile: " + selectedTile);
@@ -411,10 +452,8 @@ public class MapBuilderFrame extends Frame {
 		@Override
 		public void render(Graphics2D g2) {
 			// TODO Auto-generated method stub
-			int x, y, i, j, col, row;
-			int gapx2 = TILE_GAP * 2;
+			int x, y, i;
 			for(i=0; i<images.size(); i++) {
-				col = i % 2;
 				x = tilePaneX0 + TILE_GAP + 1 + (i%2)*(2*TILE_GAP + tileWidth + 1);
 				//x = tilePaneX0 + ((i % 2) * tileWidth + (i%2)*TILE_GAP + (i%2)*gapx2 + (i%2) );
 				y = tilePaneY0 + i/2 * tileHeight + (i/2)*TILE_GAP;
@@ -422,29 +461,25 @@ public class MapBuilderFrame extends Frame {
 			}
 			Color oldC = g2.getColor();
 			Color newC = Color.BLUE;
+			g2.setColor(newC);
 			if(selectedTile > 0) {
 				x = tilePaneX0 + TILE_GAP + (selectedTileCol % 2) * (2 * TILE_GAP + tileWidth + 1);
 				y = tilePaneY0 + selectedTileRow * (tileHeight + TILE_GAP);
-				g2.setColor(newC);
 				g2.drawRect(x, y, tileWidth+1, tileHeight+1);
-				g2.setColor(oldC);
 			}
+			
+			//draw viewport border
+			g2.drawRect(mapX0-1, mapY0-1, viewportWidth+1, viewportHeight+1);
+			
+			g2.setColor(oldC);
 			
 			synchronized(mutex) {
-				g2.drawImage(mapImage, mapX0, mapY0, 
-						mapX0 + viewportWidth, mapY0 + viewportHeight,
-						viewOffsX, viewOffsY,
-						mapImage.getWidth() - viewOffsX, mapImage.getHeight() - viewOffsY,
-						null);
-			}
-			
-			for(i=0; i<colCount; i++) {
-				for(j=0; j<rowCount; j++) {
-					x = i * tileWidth + mapX0;
-					y = j * tileHeight + mapY0;
-					synchronized(mutex) {
-						g2.drawImage(images.get(mapData[j][i]), x, y, null);
-					}
+				if(mapImage != null) {
+					g2.drawImage(mapImage, mapX0, mapY0, 
+							mapX0 + viewportWidth, mapY0 + viewportHeight,
+							viewOffsX, viewOffsY,
+							mapImage.getWidth() - viewOffsX, mapImage.getHeight() - viewOffsY,
+							null);
 				}
 			}
 			
