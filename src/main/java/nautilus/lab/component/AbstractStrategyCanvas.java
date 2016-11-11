@@ -11,7 +11,7 @@ import java.awt.image.BufferStrategy;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public abstract class AbstractStrategyCanvas extends Canvas {
+public abstract class AbstractStrategyCanvas extends Canvas implements IControlListener, CommandListener {
 	
 	/**
 	 * 
@@ -23,6 +23,9 @@ public abstract class AbstractStrategyCanvas extends Canvas {
 	protected TimerTask			renderTask;
 	protected Paint				backgroundGradient;
 	protected AffineTransform transform = new AffineTransform();
+	
+	
+	protected IDrawPaneChangeListener drawPaneListener = null;
 	
 	static {
 		//System.setProperty("sun.java2d.trace", "timestamp,log,count");
@@ -41,6 +44,10 @@ public abstract class AbstractStrategyCanvas extends Canvas {
 	}
 	
 	public abstract void render(Graphics2D g2);
+	
+	public void setDrawPaneListener(IDrawPaneChangeListener l){
+		drawPaneListener = l;
+	}
 	
 	public void setup() {
 		// create the background gradient paint object.

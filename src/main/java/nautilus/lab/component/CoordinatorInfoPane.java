@@ -13,6 +13,11 @@ import java.awt.event.ActionEvent;
 
 public class CoordinatorInfoPane extends Panel implements IDrawPaneChangeListener{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 109L;
+	
 	private TextField txtCamX, txtCamY, txtCamZ;
 	private TextField txtTargetX, txtTargetY, txtTargetZ;
 	private TextField txtUpX, txtUpY, txtUpZ;

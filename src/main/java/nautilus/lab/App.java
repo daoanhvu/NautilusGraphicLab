@@ -33,8 +33,8 @@ public class App {
     public static void main( String[] args ){
     	//startJogl();
     	//buildIndicesForTriangleStrip(3, 3);
-//    	startAWT();
-    	startMapBuilderFrame();
+    	startAWT();
+    	//startMapBuilderFrame();
 //    	testFormula();
     }
     

@@ -3,7 +3,7 @@ package nautilus.lab.graphics;
 public class Camera3D {
 	
 	static {
-		System.loadLibrary("graphiclab");
+		System.loadLibrary("nmath");
 	}
 	
 	private long nativeCamera = 0;
@@ -76,6 +76,12 @@ public class Camera3D {
 	
 	public void moveAlongForward(float distance) {
 		moveAlongForward(nativeCamera, distance);
+	}
+	
+	public void drawCoordinator(IGraphics graphics, IPaint paintX,
+			IPaint paintY, IPaint paintZ) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	private void release() {

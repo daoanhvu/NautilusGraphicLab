@@ -3,11 +3,11 @@ package nautilus.lab.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import nautilus.lab.graphics.Camera3D;
 import nautilus.lab.graphics.IGraphics;
 import nautilus.lab.graphics.IPaint;
-import nautilus.util.Camera;
 
-public class SingleModel extends Model3D{
+public class SingleModel extends Model3D {
 	protected ArrayList<VertexItem> vertices = new ArrayList<VertexItem>();
 	
 	public void addVertice(VertexItem vertex){
@@ -32,7 +32,7 @@ public class SingleModel extends Model3D{
 	}
 
 	@Override
-	public void draw(Camera camera, IGraphics g, IPaint paint) {
+	public void draw(Camera3D camera, IGraphics g, IPaint paint) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -21,15 +21,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import nautilus.lab.common.ImageUtility;
+import nautilus.lab.graphics.Camera3D;
 import nautilus.lab.graphics.IGraphics;
 import nautilus.lab.graphics.IPaint;
 import nautilus.lab.graphics.NLabGraphics;
 import nautilus.lab.model.FunctionModel;
 import nautilus.lab.model.Model3D;
-import nautilus.util.Camera;
 
 
-public class StrategyCanvas extends AbstractStrategyCanvas implements IControlListener, CommandListener{
+public class StrategyCanvas extends AbstractStrategyCanvas {
 	
 	/**
 	 * 
@@ -39,11 +39,10 @@ public class StrategyCanvas extends AbstractStrategyCanvas implements IControlLi
 	private static final int INFO_PANE_HEIGHT = 60;
 	
 	private int command = 0x00000000;
-	private IDrawPaneChangeListener drawPaneListener = null;
 	
 	private BufferedImage imageInfoPane;
 	private Image imageCtxMenu;	
-	private Camera coord;
+	private Camera3D coord;
 	private IGraphics graphics;
 	private IPaint paint;
 	private IPaint paintX, paintY, paintZ;
@@ -65,16 +64,12 @@ public class StrategyCanvas extends AbstractStrategyCanvas implements IControlLi
 		setListeners();
 		setPreferredSize(new Dimension(850, 450));
 		initImageInfoPane();
-		coord = new Camera();
+		coord = new Camera3D();
 		//System.out.println("[DEBUG] Screen(" + coord.getScreenX() + ", " + coord.getScreenY()+")");
 		
 		graphics = new NLabGraphics();
 		//Test model
 		testModel = new FunctionModel("f(x,y) = x+3*y^2 D:x<-1 AND y>0 OR x > 0", new float[]{-2, 1, 0, 1});
-	}
-	
-	public void setDrawPaneListener(IDrawPaneChangeListener l){
-		drawPaneListener = l;
 	}
 	
 	private void initImageInfoPane(){
@@ -189,7 +184,7 @@ public class StrategyCanvas extends AbstractStrategyCanvas implements IControlLi
 				}
 				
 				public void  componentResized(ComponentEvent e){
-					coord.setup(0,0, getWidth(), getHeight());
+					//coord.setup(0,0, getWidth(), getHeight());
 				}
 				
 				public void  componentShown(ComponentEvent e){

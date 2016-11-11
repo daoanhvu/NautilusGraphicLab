@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import nautilus.lab.graphics.Camera3D;
 import nautilus.lab.graphics.IGraphics;
 import nautilus.lab.graphics.IPaint;
-import nautilus.util.Camera;
 import simplemath.math.Function;
 import simplemath.math.ImageData;
 import static nautilus.lab.formula.Constant.NO_ERROR;
@@ -33,12 +33,12 @@ public class FunctionModel extends SingleModel{
 	}
 	
 	@Override
-	public void draw(Camera camera, IGraphics g2, IPaint paint){
+	public void draw(Camera3D camera, IGraphics g2, IPaint paint){
 		for(loop=0; loop<imageData.size(); loop++){
-			if(imageData.get(loop).getDimension() > 2 )
-				camera.drawTriangleTrip(g2, paint, imageData.get(loop).getImage(), indices.get(loop));
-			else {
-				camera.drawLineTrip(g2, paint, imageData.get(loop).getImage(), indices.get(loop));
+			if(imageData.get(loop).getDimension() > 2 ) {
+				//camera.drawTriangleTrip(g2, paint, imageData.get(loop).getImage(), indices.get(loop));
+			} else {
+				//camera.drawLineTrip(g2, paint, imageData.get(loop).getImage(), indices.get(loop));
 			}
 		}
 	}

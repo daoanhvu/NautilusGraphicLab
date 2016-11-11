@@ -20,8 +20,9 @@ public class LabFrame extends Frame{
 	private ToolBar mainToolBar;
 	private Menu mnFile, mnTool, mnHelp;
 	private MenuItem mniQuit, mniOpenCommandPane, mniHelp, mniAbout;
+	private MenuItem mni3ModelLab;
 
-	private StrategyCanvas canvas;
+	private AbstractStrategyCanvas canvas;
 	private CoordinatorInfoPane infoPane;
 	private CommandPane commandPane;
 	
@@ -79,7 +80,8 @@ public class LabFrame extends Frame{
 		
 		initToolBar();
 		
-		canvas = new StrategyCanvas();
+		//canvas = new StrategyCanvas();
+		canvas = new Lab3DCanvas();
 		this.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent we){
 				infoPane.setControlListener(null);
@@ -89,7 +91,7 @@ public class LabFrame extends Frame{
 			
 			public void windowOpened(WindowEvent we){
 				canvas.setup();
-				canvas.broastCastChanged();
+				//canvas.broastCastChanged();
 			}
 		});
 		this.add(canvas, BorderLayout.CENTER);

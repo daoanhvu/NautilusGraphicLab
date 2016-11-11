@@ -1,13 +1,14 @@
 package nautilus.lab.model;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
+import nautilus.lab.graphics.Camera3D;
 import nautilus.lab.graphics.IGraphics;
 import nautilus.lab.graphics.IPaint;
-import nautilus.util.Camera;
 
 public class CompositeModel extends Model3D {
-	private HashSet<Model3D> subModels = new HashSet<Model3D>();
+	private List<Model3D> subModels = new ArrayList<Model3D>();
 	
 	public void addModel(Model3D mdl){
 		subModels.add(mdl);
@@ -18,9 +19,8 @@ public class CompositeModel extends Model3D {
 	}
 
 	@Override
-	public void draw(Camera camera, IGraphics g, IPaint paint) {
+	public void draw(Camera3D camera, IGraphics g, IPaint paint) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
