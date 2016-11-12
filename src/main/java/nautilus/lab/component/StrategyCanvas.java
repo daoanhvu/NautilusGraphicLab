@@ -2,6 +2,7 @@ package nautilus.lab.component;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
@@ -65,6 +66,7 @@ public class StrategyCanvas extends AbstractStrategyCanvas {
 		setPreferredSize(new Dimension(850, 450));
 		initImageInfoPane();
 		coord = new Camera3D();
+		coord.lookAt(0, 0, -7f, 0, 0, 0, 0, 1.0f, 0);
 		//System.out.println("[DEBUG] Screen(" + coord.getScreenX() + ", " + coord.getScreenY()+")");
 		
 		graphics = new NLabGraphics();
@@ -114,10 +116,11 @@ public class StrategyCanvas extends AbstractStrategyCanvas {
 		// TODO: Draw your game world, or scene or anything else here.
 		coord.drawCoordinator(graphics, paintX, paintY, paintZ);
 
-		testModel.draw(coord, graphics, paint);
+		//testModel.draw(coord, graphics, paint);
 		
-		if(isShowCtxMenu)
+		if(isShowCtxMenu) {
 			g2.drawImage(imageCtxMenu, preMouseX, preMouseY, null);
+		}
 
 		drawInfoPane(g2);
 	}
@@ -185,6 +188,11 @@ public class StrategyCanvas extends AbstractStrategyCanvas {
 				
 				public void  componentResized(ComponentEvent e){
 					//coord.setup(0,0, getWidth(), getHeight());
+//					System.out.println(e.getSource() );
+					Component thisComponent = e.getComponent();
+					int h = thisComponent.getHeight();
+					int w = thisComponent.getWidth();
+					coord.perspective(0, w, 0, h, (float)Math.toRadians(30), 1f, 9f);
 				}
 				
 				public void  componentShown(ComponentEvent e){

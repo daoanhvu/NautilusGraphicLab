@@ -80,8 +80,8 @@ public class LabFrame extends Frame{
 		
 		initToolBar();
 		
-		//canvas = new StrategyCanvas();
-		canvas = new Lab3DCanvas();
+		canvas = new StrategyCanvas();
+		//canvas = new Lab3DCanvas();
 		this.addWindowListener(new WindowAdapter(){
 			public void windowClosing(WindowEvent we){
 				infoPane.setControlListener(null);

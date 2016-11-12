@@ -22,7 +22,7 @@ public class NLabGraphics implements IGraphics{
 	@Override
 	public void setColor(int r, int g, int b) {
 		// TODO Auto-generated method stub
-		
+		g2.setColor(new Color(r, g, b));
 	}
 
 	@Override

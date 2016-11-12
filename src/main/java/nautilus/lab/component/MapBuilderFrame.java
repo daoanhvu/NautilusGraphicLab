@@ -7,6 +7,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.MenuItem;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -466,11 +467,51 @@ public class MapBuilderFrame extends Frame {
 		
 		public void broastCastChanged() {
 		}
+		
+		public Point calculateGridSize(int width, int height) {
+			if( (tileWidth < 1 ) || (tileHeight < 1)) {
+				throw new IllegalArgumentException("Tile size much be greater than 0!!!");
+			}
+			
+			int column = width / tileWidth + ((width % tileWidth)>0?1:0);
+			int row = height / tileHeight + ((height%tileHeight)>0?1:0);
+			
+			return new Point(column, row);
+		}
+		
+		public void createNewMap(int width, int height) {
+			Point p = calculateGridSize(width, height);
+			rowCount = p.x;
+			colCount = p.y;
+			System.out.println("Row: " + rowCount + "; Column: " + colCount); 
+			synchronized(mutex) {
+				mapData = new int[rowCount][colCount];
+				for(int i=0; i<rowCount; i++) {
+					for(int j=0; j<colCount; j++) {
+						mapData[i][j] = 0;
+						mutex.notifyAll();
+					}
+				}
+			}
+		}
 
 		@Override
 		public void render(Graphics2D g2) {
 			// TODO Auto-generated method stub
-			int x, y, i;
+			int x, y, i, j;
+			int gapx2 = TILE_GAP * 2;
+			
+			synchronized(mutex) {
+				for(i=0; i<colCount; i++) {
+					for(j=0; j<rowCount; j++) {
+						x = i * tileWidth + mapX0;
+						y = j * tileHeight + mapY0;
+						g2.drawImage(images.get(mapData[j][i]), x, y, null);
+					}
+				}
+				mutex.notifyAll();
+			}
+			
 			for(i=0; i<images.size(); i++) {
 				x = tilePaneX0 + TILE_GAP + 1 + (i%2)*(2*TILE_GAP + tileWidth + 1);
 				//x = tilePaneX0 + ((i % 2) * tileWidth + (i%2)*TILE_GAP + (i%2)*gapx2 + (i%2) );

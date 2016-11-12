@@ -78,10 +78,19 @@ public class Camera3D {
 		moveAlongForward(nativeCamera, distance);
 	}
 	
-	public void drawCoordinator(IGraphics graphics, IPaint paintX,
-			IPaint paintY, IPaint paintZ) {
-		// TODO Auto-generated method stub
+	public void drawCoordinator(IGraphics graphics, IPaint paintX, IPaint paintY, IPaint paintZ) {
+		//Project the center of the coordinator
+		project(nativeCamera, p0, Ow0[0], Ow0[1], Ow0[2]);
+		project(nativeCamera, p, Xw0[0], Xw0[1], Xw0[2]);
+		project(nativeCamera, p1, Yw0[0], Yw0[1], Yw0[2]);
+		project(nativeCamera, p2, Zw0[0], Zw0[1], Zw0[2]);
 		
+		graphics.setColor(255, 0, 0);
+		graphics.drawLine(p0[0], p0[1], p[0], p[1], paintX);
+		graphics.setColor(0, 255, 0);
+		graphics.drawLine(p0[0], p0[1], p1[0], p1[1], paintY);
+		graphics.setColor(0, 0, 255);
+		graphics.drawLine(p0[0], p0[1], p2[0], p2[1], paintZ);
 	}
 	
 	private void release() {
