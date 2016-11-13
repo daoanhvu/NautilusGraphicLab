@@ -169,10 +169,10 @@ public class StrategyCanvas extends AbstractStrategyCanvas {
 			}
 			
 			public void mouseDragged(MouseEvent evt) {
-				double dx = evt.getX() - preMouseX;
-				double dy = evt.getY() - preMouseY;
+				float dx = evt.getX() - preMouseX;
+				float dy = evt.getY() - preMouseY;
 				
-				
+				coord.rotate(dx, dy, 0);
 				
 				preMouseX = evt.getX();
 				preMouseY = evt.getY();

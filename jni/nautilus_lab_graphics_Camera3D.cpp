@@ -2,8 +2,10 @@
 #include <camera.h>
 #include <nmath/nmath.h>
 
+#ifdef _DEBUG
 #include <iostream>
 using namespace std;
+#endif
 
 using namespace fp;
 
@@ -31,7 +33,9 @@ JNIEXPORT void JNICALL Java_nautilus_lab_graphics_Camera3D_project(JNIEnv *env, 
 	static float tmp[3];
 	fp::Camera *c = (fp::Camera*)address;
 	c->project(tmp, objX, objY, objZ);
+#ifdef _DEBUG
 	cout << tmp[0] << ", " << tmp[1] << endl;
+#endif
 //#ifdef _DEBUG
 //	LOGI(2, "After project %f %f %f", tmp[0], tmp[1], tmp[2]);
 //#endif

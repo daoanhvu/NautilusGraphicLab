@@ -14,10 +14,13 @@ import java.util.ArrayList;
 
 import java.util.List;
 
-//import javax.media.opengl.GLCapabilities;
-//import javax.media.opengl.GLProfile;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLDrawableFactory;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.swt.GLCanvas;
 
 import simplemath.math.Function;
 import simplemath.math.ImageData;
@@ -31,10 +34,10 @@ import nautilus.lab.jogl.NLabScene;
  */
 public class App {
     public static void main( String[] args ){
-    	//startJogl();
+    	startJogl();
     	//buildIndicesForTriangleStrip(3, 3);
-    	startAWT();
-    	//startMapBuilderFrame();
+//    	startAWT();
+//    	startMapBuilderFrame();
 //    	testFormula();
     }
     
@@ -86,29 +89,9 @@ public class App {
 
     
     public static void startJogl(){
-    	//GLProfile profile = GLProfile.getDefault();
-    	//GLCapabilities caps = new GLCapabilities(profile);
-    	Function f = new Function();
-    	int errorCode = f.setString("f(x,y)=sin(x)+cos(y)");
-    	
-    	List<ImageData> list = f.getSpace(new float[]{-2, 2, -2, 2}, .2f);
-    	final NLabScene scene = new NLabScene(list);
-    	JFrame frame = new JFrame("AWT Window Test");
-    	frame.setSize(300, 300);
-    	frame.getContentPane().add(scene, BorderLayout.CENTER);
-    	frame.setVisible(true);
-    	
-    	frame.addWindowListener(new WindowAdapter(){
-    		public void windowClosing(WindowEvent e){
-    			Thread thread = new Thread(new Runnable(){
-    				public void run() {
-    					scene.stopAnimator();
-    	    			System.exit(0);
-    				}
-    			});
-    			thread.start();
-    		}
-    	});
+    	GLProfile profile = GLProfile.get(GLProfile.GL2);
+    	GLCapabilities caps = new GLCapabilities(profile);
+    	GLCanvas glCanvas = new GLCanvas(caps);
     }
     
     public static void startAWT(){

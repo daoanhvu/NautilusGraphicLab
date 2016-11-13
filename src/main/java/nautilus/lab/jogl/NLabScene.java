@@ -34,11 +34,11 @@ public class NLabScene extends GLCanvas {
 	short[] indices;
 	int[] buffers;
 	
-	public NLabScene(List<ImageData> _imageData) {
-		imageData = _imageData.get(0);
-		glEventListener = new MyGLEventListener();
-		this.addGLEventListener(glEventListener);
-	}
+//	public NLabScene(List<ImageData> _imageData) {
+//		imageData = _imageData.get(0);
+//		glEventListener = new MyGLEventListener();
+//		this.addGLEventListener(glEventListener);
+//	}
 	
 	public void stopAnimator(){
 		if(animator!=null && animator.isStarted())
@@ -46,11 +46,11 @@ public class NLabScene extends GLCanvas {
 	}
 	
 	void initBuffers(GL2 gl) {
-		buffers = new int[2];
-		gl.glGenBuffers(2, buffers, 0);
-		indices = GraphUtilites.buildIndicesForGLLINEs(imageData.getVertexCount(), imageData.getRowInfo());
-		createVertexBuffer(gl, GL_ARRAY_BUFFER, imageData.getImage(), buffers[0]);
-		createIndexBuffer(gl, GL_ELEMENT_ARRAY_BUFFER, indices, buffers[1]);
+//		buffers = new int[2];
+//		gl.glGenBuffers(2, buffers, 0);
+//		indices = GraphUtilites.buildIndicesForGLLINEs(imageData.getVertexCount(), imageData.getRowInfo());
+//		createVertexBuffer(gl, GL_ARRAY_BUFFER, imageData.getImage(), buffers[0]);
+//		createIndexBuffer(gl, GL_ELEMENT_ARRAY_BUFFER, indices, buffers[1]);
 	}
 
 	private void createIndexBuffer(GL2 gl, int glElementArrayBuffer, short[] indices, int bufferId) {
