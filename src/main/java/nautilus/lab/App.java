@@ -18,15 +18,15 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLDrawableFactory;
 import com.jogamp.opengl.GLProfile;
-import com.jogamp.opengl.swt.GLCanvas;
+import com.jogamp.opengl.awt.GLCanvas;
 
 import simplemath.math.Function;
 import simplemath.math.ImageData;
 import nautilus.lab.component.LabFrame;
 import nautilus.lab.component.MapBuilderFrame;
 import nautilus.lab.formula.TestFormulaFrame;
+import nautilus.lab.jogl.GLFrame;
 import nautilus.lab.jogl.NLabScene;
 
 /**
@@ -89,9 +89,20 @@ public class App {
 
     
     public static void startJogl(){
-    	GLProfile profile = GLProfile.get(GLProfile.GL2);
-    	GLCapabilities caps = new GLCapabilities(profile);
-    	GLCanvas glCanvas = new GLCanvas(caps);
+    	try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					GLFrame testFormulaFrm = new GLFrame();
+					testFormulaFrm.setVisible(true);
+				}
+			});
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
     public static void startAWT(){
