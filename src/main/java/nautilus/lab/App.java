@@ -9,17 +9,10 @@ import java.awt.event.WindowEvent;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-
-
-
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLProfile;
-import com.jogamp.opengl.awt.GLCanvas;
 
 import simplemath.math.Function;
 import simplemath.math.ImageData;
