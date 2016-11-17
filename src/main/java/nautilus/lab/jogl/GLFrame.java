@@ -4,13 +4,8 @@ import java.awt.Container;
 
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
-
-import nautilus.lab.graphics.Camera3D;
 
 public class GLFrame extends JFrame {
 	private static final long serialVersionUID = 107L;
@@ -40,5 +35,6 @@ public class GLFrame extends JFrame {
 		glCanvas.requestFocusInWindow();
 		
 		c.add(glCanvas);
+
 	}
 }
