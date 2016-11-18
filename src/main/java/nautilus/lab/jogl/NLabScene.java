@@ -91,9 +91,13 @@ public class NLabScene extends GLCanvas {
 	        gl3.glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 	        gl3.glEnable(GL3.GL_DEPTH_TEST);
 	        
+//	        mProgramShader.init(gl3, 
+//	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\vertex.shader", 
+//	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\fragment.shader");
+	        
 	        mProgramShader.init(gl3, 
-	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\vertex.shader", 
-	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\fragment.shader");
+	        		"C:\\projects\\NautilusGraphicLab\\shaders\\vertex.shader", 
+	        		"C:\\projects\\NautilusGraphicLab\\shaders\\fragment.shader");
 	        
 	        //IMPORTANT: set position for attribute
 	        mProgramShader.bindAttribLocation(gl3, POSITION_HANDLE,"aPosition");
