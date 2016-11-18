@@ -20,8 +20,23 @@ JNIEXPORT jlong JNICALL Java_nautilus_lab_graphics_Camera3D_initCamera
  * Method:    lookAt
  * Signature: (JFFFFFFFFF)V
  */
-JNIEXPORT void JNICALL Java_nautilus_lab_graphics_Camera3D_lookAt
+JNIEXPORT void JNICALL Java_nautilus_lab_graphics_Camera3D_lookAt__JFFFFFFFFF
   (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat);
+
+/*
+ * Class:     nautilus_lab_graphics_Camera3D
+ * Method:    lookAt
+ * Signature: (JFFFFFFFFF[F)V
+ */
+JNIEXPORT void JNICALL Java_nautilus_lab_graphics_Camera3D_lookAt__JFFFFFFFFF_3F
+  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jfloatArray);
+
+/*
+ * Class:     nautilus_lab_graphics_Camera3D
+ * Method:    lookAt
+ * Signature: (J[F[F[F[F)V
+ */
+JNIEXPORT void JNICALL Java_nautilus_lab_graphics_Camera3D_lookAt__J_3F_3F_3F_3F(JNIEnv *, jobject, jlong, jfloatArray, jfloatArray, jfloatArray, jfloatArray);
 
 /*
  * Class:     nautilus_lab_graphics_Camera3D

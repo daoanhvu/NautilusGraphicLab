@@ -18,7 +18,7 @@ public class FunctionModel extends SingleModel{
 	private Color color = new Color(104, 20, 19);
 	private boolean updating = false;
 	float[] boundaries;
-	List<ImageData> imageData;
+	List<ImageData> imageData = new ArrayList<>();
 	List<short[]> indices;
 	int loop;
 	
@@ -27,7 +27,7 @@ public class FunctionModel extends SingleModel{
 		function = new Function();
 		if(function.setString(strFunction) == NO_ERROR){
 			boundaries = _boundaries;
-			imageData = function.getSpace(boundaries, 0.1f);
+			function.getSpace(boundaries, 0.1f, false, imageData);
 		}else
 			updating = true;
 	}

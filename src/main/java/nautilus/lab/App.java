@@ -27,9 +27,9 @@ import nautilus.lab.jogl.NLabScene;
  */
 public class App {
     public static void main( String[] args ){
-//    	startJogl();
+    	startJogl();
     	//buildIndicesForTriangleStrip(3, 3);
-    	startAWT();
+//    	startAWT();
 //    	startMapBuilderFrame();
 //    	testFormula();
     }

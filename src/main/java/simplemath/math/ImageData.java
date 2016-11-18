@@ -1,9 +1,15 @@
 package simplemath.math;
 
 public class ImageData {
-
+	
+	private int dimension = 0;
+	private float[] image = null;
+	private int[] rowsInfo = null;
+	private int normalOffset = -1;
+	private short[] indices;
+	
 	public int getVertexCount() {
-		return 0;
+		return image.length / dimension;
 	}
 
 	public int[] getRowInfo() {
@@ -11,13 +17,11 @@ public class ImageData {
 	}
 
 	public float[] getImage() {
-		// TODO Auto-generated method stub
-		return null;
+		return image;
 	}
 
 	public int getDimension() {
-		// TODO Auto-generated method stub
-		return 0;
+		return dimension;
 	}
 
 }

@@ -1,25 +1,39 @@
 package simplemath.math;
 
 import java.util.List;
+import static nautilus.lab.formula.Constant.NO_ERROR;
 
 public class Function {
-	private long jniAddress;
 	
-	private native long jniInit();
-	private native void jniCalc(long address);
-	private native Function derivative(long address);
-	private native void jniGetSpace(long address, ImageData img);
-	
-	public int setString(String str) {
-		return -1;
+	static {
+		System.loadLibrary("nmath");
 	}
 	
-	public List<ImageData> getSpace(float[] bounds, float step) {
-		return null;
+	private long jniAddress;
+	private String mText;
+	
+	private native long jniInit();
+	private native int jniSetString(long address, String str);
+	private native void jniCalc(long address, String str, ReturnVal result);
+	private native int derivative(long address, Function result);
+	private native void jniGetSpace(long address, float[] bounds, float epsilon, boolean includeNormal, List<ImageData> imageDataList);
+	private native void jniRelease(long adrress);
+	
+	public int setString(String str) {
+		int result = jniSetString(jniAddress, str);
+		
+		if(result == NO_ERROR) {
+			mText = str;
+		}
+		
+		return result;
+	}
+	
+	public void getSpace(float[] bounds, float epsilon, boolean includeNormal, List<ImageData> imageDataList) {
+		jniGetSpace(jniAddress, bounds, epsilon, includeNormal, imageDataList);
 	}
 
 	public void release() {
-		// TODO Auto-generated method stub
-		
+		jniRelease(jniAddress);
 	}
 }

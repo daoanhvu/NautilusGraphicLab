@@ -36,10 +36,36 @@ public class Camera3D {
 	private float[] pw2 = {0, 0, 0, 1};
 	
 	private native long initCamera();
+	
 	private native void lookAt(long address, float ex, float ey, float ez,
 			float cx, float cy, float cz, float ux, float uy, float uz);
-	private native void perspective(long address, int l, int r, int t, int b,
-			float fov, float near, float far);
+	
+	/**
+	 * 
+	 * @param address
+	 * @param ex
+	 * @param ey
+	 * @param ez
+	 * @param cx
+	 * @param cy
+	 * @param cz
+	 * @param ux
+	 * @param uy
+	 * @param uz
+	 * @param view
+	 */
+	private native void lookAt(long address, float ex, float ey, float ez,
+			float cx, float cy, float cz, float ux, float uy, float uz, float[] view);
+	/**
+	 * 
+	 * @param address
+	 * @param eye
+	 * @param center
+	 * @param up
+	 * @param view [OUT]
+	 */
+	private native void lookAt(long address, float[] eye, float[] center, float[] up, float[] view);
+	private native void perspective(long address, int l, int r, int t, int b, float fov, float near, float far);
 	private native void project(long address, float[] out, float objX, float objY, float objZ);
 	private native void projectOrthor(long address, float[] out, float objX, float objY, float objZ);
 	private native void rotate(long address, float yawR, float pitchR, float roll);
@@ -52,6 +78,14 @@ public class Camera3D {
 		eyeY = ey;
 		eyeZ = ez;
 		lookAt(nativeCamera, ex, ey, ez, cx, cy, cz, ux, uy, uz);
+	}
+	
+	public void lookAt(float ex, float ey, float ez,
+			float cx, float cy, float cz, float ux, float uy, float uz, float[] viewMatrix) {
+		eyeX = ex;
+		eyeY = ey;
+		eyeZ = ez;
+		lookAt(nativeCamera, ex, ey, ez, cx, cy, cz, ux, uy, uz, viewMatrix);
 	}
 	
 	public void perspective(int l, int r, int t, int b,
