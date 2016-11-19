@@ -13,11 +13,11 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.math.Matrix4;
 import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.FPSAnimator;
 
 import simplemath.math.ImageData;
+import simplemath.math.Matrix4;
 import nautilus.lab.graphics.Camera3D;
 import nautilus.util.GraphUtilites;
 
@@ -56,10 +56,13 @@ public class NLabScene extends GLCanvas {
 	private final float[] mMVP = new float[16];
 	private final float[] mModel = new float[16];
 	
-	private final Matrix4 mPerspective = new Matrix4();
+	private float[] lightPosInWorldSpace = {0f, 0f, 0f};
+	float[] lightPosInEyeSpace = {0f, 0f, 0f};
 	
 	private float preMouseX;
 	private float preMouseY;
+	
+	final Matrix4 mMatrix4 = new Matrix4();
 
 	public NLabScene(GLCapabilities caps) {
 		super(caps);
@@ -130,13 +133,13 @@ public class NLabScene extends GLCanvas {
 	        
 	        coord.lookAt(0, 0, -7f, 0, 0, 0, 0, 1.0f, 0, mViewMatrix);
 	        
-	        mProgramShader.init(gl3, 
-	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\vertex.shader", 
-	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\fragment.shader");
-	        
 //	        mProgramShader.init(gl3, 
-//	        		"C:\\projects\\NautilusGraphicLab\\shaders\\vertex.shader", 
-//	        		"C:\\projects\\NautilusGraphicLab\\shaders\\fragment.shader");
+//	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\vertex.shader", 
+//	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\fragment.shader");
+	        
+	        mProgramShader.init(gl3, 
+	        		"C:\\projects\\NautilusGraphicLab\\shaders\\vertex.shader", 
+	        		"C:\\projects\\NautilusGraphicLab\\shaders\\fragment.shader");
 	        
 	        //IMPORTANT: set position for attribute
 	        mProgramShader.bindAttribLocation(gl3, POSITION_HANDLE,"aPosition");
@@ -166,26 +169,26 @@ public class NLabScene extends GLCanvas {
 			
 			//Draw tasks go here
 			
-			uModelViewMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uModelView");
-			uMVPHandle = GLES20.glGetUniformLocation(mProgram, "uMVP");
-			uLightPosHandle = GLES20.glGetUniformLocation(mProgram, "uLightPos");
-			uNeedLightingHandle = GLES20.glGetUniformLocation(mProgram, "uNeedLighting");
+			uModelViewMatrixHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uModelView");
+			uMVPHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uMVP");
+			uLightPosHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uLightPos");
+			uNeedLightingHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uNeedLighting");
 			
-			Matrix.multiplyMM(mModelView, 0, mViewMatrix, 0, mModel, 0);
-			Matrix.multiplyMM(mMVP, 0, mPerspectiveMatrix, 0, mModelView, 0);
+			mMatrix4.multiplyMM(mModelView, mViewMatrix, mModel);
+			mMatrix4.multiplyMM(mMVP, mPerspectiveMatrix, mModelView);
 			
 //			Matrix.multiplyMM(mMVP, 0, mOrthoMatrix, 0, mViewMatrix, 0);
 			
 			//Setting the camera
-			GLES20.glUniformMatrix4fv(uMVPHandle, 1, false, mMVP, 0);
-			GLES20.glUniformMatrix4fv(uModelViewMatrixHandle, 1, false, mModelView, 0);
+			gl3.glUniformMatrix4fv(uMVPHandle, 1, false, mMVP, 0);
+			gl3.glUniformMatrix4fv(uModelViewMatrixHandle, 1, false, mModelView, 0);
 			
 			// Calculate position of the light. Push into the distance.
 //			Matrix.setIdentityM(lightModelMatrix, 0);
 			//Matrix.translateM(lightModelMatrix, 0, 0.1f, 2.5f, -3.0f);
 //			Matrix.multiplyMV(lightPosInWorldSpace, 0, lightModelMatrix, 0, lightPosInModelSpace, 0);
 //			Matrix.multiplyMV(lightPosInEyeSpace, 0, mViewMatrix, 0, lightPosInWorldSpace, 0);
-			Matrix.multiplyMV(lightPosInEyeSpace, 0, mModelView, 0, lightPosInWorldSpace, 0);
+			mMatrix4.multiplyMV(lightPosInEyeSpace, mModelView, lightPosInWorldSpace);
 			
 			//Setting Light source
 			gl3.glUniform3f(uLightPosHandle, lightPosInEyeSpace[0], lightPosInEyeSpace[1],lightPosInEyeSpace[2]);
