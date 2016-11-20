@@ -56,8 +56,23 @@ public class NLabScene extends GLCanvas {
 	private final float[] mMVP = new float[16];
 	private final float[] mModel = new float[16];
 	
-	private float[] lightPosInWorldSpace = {0f, 0f, 0f};
-	float[] lightPosInEyeSpace = {0f, 0f, 0f};
+	float[] lightPosInWorldSpace = {0f, 0f, 0f, 0f};
+	float[] lightPosInEyeSpace = {0f, 0f, 0f, 0f};
+	float rotX;
+	float rotY;
+	int uMVPHandle;
+	int uModelViewMatrixHandle;
+	int uLightPosHandle;
+	int uNeedLightingHandle;
+	
+	
+	final float[] mRotationInversion = new float[16];
+	final float[] mTranslationM = new float[16];
+	final float[] mRotationM = new float[16];
+	final float[] mRotationAxisX = new float[4];
+	final float[] mWorldRotationAxisX = new float[4];
+	final float[] mRotationAxisY = new float[4];
+	final float[] mWorldRotationAxisY = new float[4];
 	
 	private float preMouseX;
 	private float preMouseY;
@@ -84,6 +99,18 @@ public class NLabScene extends GLCanvas {
 				float dy = evt.getY() - preMouseY;
 				
 				coord.rotate(dx, dy, 0);
+				
+				rotX = -1 * dy /*pitchInRadian*/ * 0.05f;
+				rotY = -1 * dx /*yaw */ * 0.05f;
+				
+				mMatrix4.invertM(mRotationInversion, mRotationM);
+				mMatrix4.multiplyMV(mRotationAxisX, mRotationInversion, mWorldRotationAxisX);
+				mMatrix4.rotateM(mRotationM, (float)Math.toDegrees(rotX), mRotationAxisX[0], mRotationAxisX[1], mRotationAxisX[2]);
+				mMatrix4.invertM(mRotationInversion, mRotationM);
+				mMatrix4.multiplyMV(mRotationAxisY, mRotationInversion, mWorldRotationAxisY);
+				mMatrix4.rotateM(mRotationM, (float)Math.toDegrees(rotY), mRotationAxisY[0], mRotationAxisY[1], mRotationAxisY[2]);
+
+				mMatrix4.multiplyMM(mModel, mTranslationM, mRotationM);
 				
 				preMouseX = evt.getX();
 				preMouseY = evt.getY();
