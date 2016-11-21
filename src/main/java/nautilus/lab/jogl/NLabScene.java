@@ -30,6 +30,8 @@ import nautilus.util.GraphUtilites;
 public class NLabScene extends GLCanvas {
 	private static final long serialVersionUID = 155L;
 	
+	static final int FPS_INTERVAL = 30;
+	
 	/** Additional constants. */
 	private static final int POSITION_HANDLE = 0;
 	private static final int NORMAL_HANDLE = 1;
@@ -70,14 +72,19 @@ public class NLabScene extends GLCanvas {
 	final float[] mTranslationM = new float[16];
 	final float[] mRotationM = new float[16];
 	final float[] mRotationAxisX = new float[4];
-	final float[] mWorldRotationAxisX = new float[4];
 	final float[] mRotationAxisY = new float[4];
-	final float[] mWorldRotationAxisY = new float[4];
+	
+	
+	final float[] mWorldRotationAxisX = {1, 0, 0, 0};
+	final float[] mWorldRotationAxisY = {0, 1, 0, 0};
 	
 	private float preMouseX;
 	private float preMouseY;
 	
 	final Matrix4 mMatrix4 = new Matrix4();
+	
+	//Animation control
+	final FPSAnimator animator;
 
 	public NLabScene(GLCapabilities caps) {
 		super(caps);
@@ -103,6 +110,8 @@ public class NLabScene extends GLCanvas {
 				rotX = -1 * dy /*pitchInRadian*/ * 0.05f;
 				rotY = -1 * dx /*yaw */ * 0.05f;
 				
+				System.out.println("Rotate: " + rotX + "," + rotY);
+				
 				mMatrix4.invertM(mRotationInversion, mRotationM);
 				mMatrix4.multiplyMV(mRotationAxisX, mRotationInversion, mWorldRotationAxisX);
 				mMatrix4.rotateM(mRotationM, (float)Math.toDegrees(rotX), mRotationAxisX[0], mRotationAxisX[1], mRotationAxisX[2]);
@@ -116,6 +125,19 @@ public class NLabScene extends GLCanvas {
 				preMouseY = evt.getY();
 			}
 		});
+		
+		mMatrix4.identity(mModel);
+		mMatrix4.identity(mRotationM);
+		
+		animator = new FPSAnimator(this, FPS_INTERVAL, true);
+	}
+	
+	public void start() {
+		animator.start();
+	}
+	
+	public void stop() {
+		animator.stop();
 	}
 	
 	void normalize(float[] result, float a, float b, float c) {
@@ -126,24 +148,34 @@ public class NLabScene extends GLCanvas {
 	}
 	
 	void cross(float[] r, float[] v1, float[] v2) {
-		r[0] = v1.data[1]*v2.data[2]-v1.data[2]*v2.data[1];
-		r[1] = v1.data[2]*v2.data[0]-v1.data[0]*v2.data[2]
-		return Vec3<T>(,
-					,
-					v1.data[0]*v2.data[1]-v1.data[1]*v2.data[0]);
+		r[0] = v1[1]*v2[2]-v1[2]*v2[1];
+		r[1] = v1[2]*v2[0]-v1[0]*v2[2];
+		r[2] = v1[0]*v2[1]-v1[1]*v2[0];
 	}
+	
+	float dot(float[] v1, float[] v2) {
+		return (v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2]);
+	}
+	
+	float eyeX;
+	float eyeY;
+	float eyeZ;
+	float centerX;
+	float centerY;
+	float centerZ;
 	
 	void lookAt(float ex, float ey, float ez,
 			float cx, float cy, float cz, float ux, float uy, float uz) {
 		float[] f = {0, 0, 0};
 		float[] cr = {0, 0, 0};
+		float[] s = {0, 0, 0};
+		float[] u = {0, 0, 0};
 		normalize(f, cx-ex, cy-ey, cz-ez);
-		up = gm::vec3(ux, uy, uz);
-		cross(cr, f, up)
-		gm::vec3 s = gm::normalize();
-		gm::vec3 u = gm::cross(s, f);
-		gm::vec3 eye(ex, ey, ez);
-		int i, j;
+		float[] up = {ux, uy, uz};
+		cross(cr, f, up);
+		normalize(s, cr[0], cr[1], cr[2]);
+		cross(u, s, f);
+		float[] eye = {ex, ey, ez};
 
 		centerX = cx;
 		centerY = cy;
@@ -152,26 +184,28 @@ public class NLabScene extends GLCanvas {
 		eyeX = ex;
 		eyeY = ey;
 		eyeZ = ez;
-
 		
 		mViewMatrix[0] = 1;
 		mViewMatrix[5] = 1;
 		mViewMatrix[10] = 1;
 		mViewMatrix[15] = 1;
 		
+		mViewMatrix[3] = 0;
+		mViewMatrix[7] = 0;
+		mViewMatrix[11] = 0;
 
-		mViewMatrix[0][0] = s[0]; //s.x
-		mViewMatrix[1][0] = s[1]; //s.y
-		mViewMatrix[2][0] = s[2]; //s.z
-		mViewMatrix[0][1] = u[0];
-		mViewMatrix[1][1] = u[1];
-		mViewMatrix[2][1] = u[2];
-		mViewMatrix[0][2] =-f[0];
-		mViewMatrix[1][2] =-f[1];
-		mViewMatrix[2][2] =-f[2];
-		mViewMatrix[3][0] =-gm::dot(s, eye);
-		mViewMatrix[3][1] =-gm::dot(u, eye);
-		mViewMatrix[3][2] = gm::dot(f, eye);
+		mViewMatrix[0] = s[0]; //s.x
+		mViewMatrix[4] = s[1]; //s.y
+		mViewMatrix[8] = s[2]; //s.z
+		mViewMatrix[1] = u[0];
+		mViewMatrix[5] = u[1];
+		mViewMatrix[9] = u[2];
+		mViewMatrix[2] =-f[0];
+		mViewMatrix[6] =-f[1];
+		mViewMatrix[10] =-f[2];
+		mViewMatrix[12] =-dot(s, eye);
+		mViewMatrix[13] =-dot(u, eye);
+		mViewMatrix[14] = dot(f, eye);
 	}
 	
 	private GLEventListener glListener = new GLEventListener() {
@@ -215,14 +249,17 @@ public class NLabScene extends GLCanvas {
 	        gl3.glEnable(GL3.GL_DEPTH_TEST);
 	        
 	        lookAt(0, 0, -7f, 0, 0, 0, 0, 1.0f, 0);
-	        
-//	        mProgramShader.init(gl3, 
-//	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\vertex.shader", 
-//	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\fragment.shader");
+	        mMatrix4.identity(mRotationM);
+	        mMatrix4.identity(mTranslationM);
+	        mMatrix4.identity(mModel);
 	        
 	        mProgramShader.init(gl3, 
-	        		"C:\\projects\\NautilusGraphicLab\\shaders\\vertex.shader", 
-	        		"C:\\projects\\NautilusGraphicLab\\shaders\\fragment.shader");
+	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\vertex.shader", 
+	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\fragment.shader");
+	        
+//	        mProgramShader.init(gl3, 
+//	        		"C:\\projects\\NautilusGraphicLab\\shaders\\vertex.shader", 
+//	        		"C:\\projects\\NautilusGraphicLab\\shaders\\fragment.shader");
 	        
 	        //IMPORTANT: set position for attribute
 	        mProgramShader.bindAttribLocation(gl3, POSITION_HANDLE,"aPosition");
@@ -249,6 +286,8 @@ public class NLabScene extends GLCanvas {
 			GL3 gl3 = drawable.getGL().getGL3();			
 			gl3.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
 			gl3.glUseProgram(mProgramShader.getProgramId());
+			
+//			System.out.println("Display: ");
 			
 			//Draw tasks go here
 			

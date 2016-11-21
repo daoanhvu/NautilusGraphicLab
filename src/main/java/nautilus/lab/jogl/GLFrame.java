@@ -1,6 +1,8 @@
 package nautilus.lab.jogl;
 
 import java.awt.Container;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 
@@ -24,7 +26,7 @@ public class GLFrame extends JFrame {
 		Container c = this.getContentPane();
 		this.setSize(WIDTH, HEIGHT);
 //		c.setBounds(0, 0, WIDTH, HEIGHT);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//Set GLProfile
 		GLProfile glProfile = GLProfile.get(GLProfile.GL3);
@@ -35,6 +37,29 @@ public class GLFrame extends JFrame {
 		glCanvas.requestFocusInWindow();
 		
 		c.add(glCanvas);
+		
+		addWindowListener(new WindowAdapter() {
+			@Override 
+	         public void windowClosing(WindowEvent e) {
+	            // Use a dedicate thread to run the stop() to ensure that the
+	            // animator stops before program exits.
+	            new Thread() {
+	               @Override 
+	               public void run() {
+	            	   glCanvas.stop(); // stop the animator loop
+	            	   System.exit(0);
+	               }
+	            }.start();
+	         }
+			
+			@Override 
+	         public void windowOpened(WindowEvent e) {
+				glCanvas.start();
+	         }
+			
+		});
 
 	}
+	
+	 
 }
