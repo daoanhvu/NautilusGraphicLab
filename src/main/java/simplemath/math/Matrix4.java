@@ -221,7 +221,61 @@ public class Matrix4 {
 		return true;
 	}
 	
-	public void rotateM(float[] result, float angle, float rotx, float roty, float rotz) {
+	public void rotateM(float[] m, float angleR, float rotx, float roty, float rotz) {
+//		Vec3<T> axis, temp;
+		float[] Rotate = new float[16];
+		float[] Result = new float[16];
 		
+		float c = (float)Math.cos(angleR);
+		float s = (float)Math.sin(angleR);
+
+		//normalize the rotation axis
+		float mag = (float)Math.sqrt(rotx*rotx + roty*roty + rotz*rotz);
+		float[] axis = {rotx/mag, roty/mag, rotz/mag};
+		float[]	temp = {axis[0] * (1.0f - c), axis[1] * (1.0f - c), axis[2] * (1.0f - c)};
+		Rotate[0] = c + temp[0] * axis[0];
+		Rotate[1] = temp[0] * axis[1] + s * axis[2];
+		Rotate[2] = temp[0] * axis[2] - s * axis[1];
+
+		Rotate[4] = temp[1] * axis[0] - s * axis[2];
+		Rotate[5] = c + temp[1] * axis[1];
+		Rotate[6] = temp[1] * axis[2] + s * axis[0];
+
+		Rotate[8] = temp[2] * axis[0] + s * axis[1];
+		Rotate[9] = temp[2] * axis[1] - s * axis[0];
+		Rotate[10] = c + temp[2] * axis[2];
+
+		//column 0 = column m[0] * rotate[0]
+		Result[0] = m[0] * Rotate[0] + m[4] * Rotate[4] + m[8] * Rotate[8];
+		Result[1] = m[1] * Rotate[0] + m[5] * Rotate[4] + m[9] * Rotate[8];
+		Result[2] = m[2] * Rotate[0] + m[6] * Rotate[4] + m[10] * Rotate[8];
+		Result[3] = m[3] * Rotate[0] + m[7] * Rotate[4] + m[11] * Rotate[8];
+		
+		Result[4] = m[0] * Rotate[4] + m[1] * Rotate[5] + m[2] * Rotate[6];
+		Result[5] = m[0] * Rotate[4] + m[1] * Rotate[5] + m[2] * Rotate[6];
+		Result[6] = m[0] * Rotate[4] + m[1] * Rotate[5] + m[2] * Rotate[6];
+		Result[7] = m[0] * Rotate[4] + m[1] * Rotate[5] + m[2] * Rotate[6];
+		
+		Result[8] = m[0] * Rotate[8] + m[1] * Rotate[9] + m[2] * Rotate[10];
+		Result[9] = m[0] * Rotate[8] + m[1] * Rotate[9] + m[2] * Rotate[10];
+		Result[10] = m[0] * Rotate[8] + m[1] * Rotate[9] + m[2] * Rotate[10];
+		Result[11] = m[0] * Rotate[8] + m[1] * Rotate[9] + m[2] * Rotate[10];
+		
+		//Result[3] = m[3];
+		
+		m[0] = Result[0];
+		m[1] = Result[1];
+		m[2] = Result[2];
+		m[3] = Result[3];
+		
+		m[4] = Result[4];
+		m[5] = Result[5];
+		m[6] = Result[6];
+		m[7] = Result[7];
+		
+		m[8] = Result[8];
+		m[9] = Result[9];
+		m[10] = Result[10];
+		m[11] = Result[11];
 	}
 }

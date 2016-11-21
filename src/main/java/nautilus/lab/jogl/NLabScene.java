@@ -40,7 +40,7 @@ public class NLabScene extends GLCanvas {
 	public static final int BYTES_PER_FLOAT = 4;
 	public static final int BYTES_PER_SHORT = 2;
 	
-	private Camera3D coord;
+	//private Camera3D coord;
 	private GLShaderProgram mProgramShader;
 	
 	private int[] axesBufferIndex = new int[1];
@@ -85,7 +85,7 @@ public class NLabScene extends GLCanvas {
 		mProgramShader = new GLShaderProgram();
 		
 		//Init camera
-		coord = new Camera3D();
+		//coord = new Camera3D();
 		
 		addGLEventListener(glListener);
 		
@@ -98,7 +98,7 @@ public class NLabScene extends GLCanvas {
 				float dx = evt.getX() - preMouseX;
 				float dy = evt.getY() - preMouseY;
 				
-				coord.rotate(dx, dy, 0);
+				//coord.rotate(dx, dy, 0);
 				
 				rotX = -1 * dy /*pitchInRadian*/ * 0.05f;
 				rotY = -1 * dx /*yaw */ * 0.05f;
@@ -116,6 +116,62 @@ public class NLabScene extends GLCanvas {
 				preMouseY = evt.getY();
 			}
 		});
+	}
+	
+	void normalize(float[] result, float a, float b, float c) {
+		float mag = (float)Math.sqrt(a*a + b*b + c*c);
+		result[0] = a/mag;
+		result[1] = b/mag;
+		result[2] = c/mag;
+	}
+	
+	void cross(float[] r, float[] v1, float[] v2) {
+		r[0] = v1.data[1]*v2.data[2]-v1.data[2]*v2.data[1];
+		r[1] = v1.data[2]*v2.data[0]-v1.data[0]*v2.data[2]
+		return Vec3<T>(,
+					,
+					v1.data[0]*v2.data[1]-v1.data[1]*v2.data[0]);
+	}
+	
+	void lookAt(float ex, float ey, float ez,
+			float cx, float cy, float cz, float ux, float uy, float uz) {
+		float[] f = {0, 0, 0};
+		float[] cr = {0, 0, 0};
+		normalize(f, cx-ex, cy-ey, cz-ez);
+		up = gm::vec3(ux, uy, uz);
+		cross(cr, f, up)
+		gm::vec3 s = gm::normalize();
+		gm::vec3 u = gm::cross(s, f);
+		gm::vec3 eye(ex, ey, ez);
+		int i, j;
+
+		centerX = cx;
+		centerY = cy;
+		centerZ = cz;
+
+		eyeX = ex;
+		eyeY = ey;
+		eyeZ = ez;
+
+		
+		mViewMatrix[0] = 1;
+		mViewMatrix[5] = 1;
+		mViewMatrix[10] = 1;
+		mViewMatrix[15] = 1;
+		
+
+		mViewMatrix[0][0] = s[0]; //s.x
+		mViewMatrix[1][0] = s[1]; //s.y
+		mViewMatrix[2][0] = s[2]; //s.z
+		mViewMatrix[0][1] = u[0];
+		mViewMatrix[1][1] = u[1];
+		mViewMatrix[2][1] = u[2];
+		mViewMatrix[0][2] =-f[0];
+		mViewMatrix[1][2] =-f[1];
+		mViewMatrix[2][2] =-f[2];
+		mViewMatrix[3][0] =-gm::dot(s, eye);
+		mViewMatrix[3][1] =-gm::dot(u, eye);
+		mViewMatrix[3][2] = gm::dot(f, eye);
 	}
 	
 	private GLEventListener glListener = new GLEventListener() {
@@ -158,7 +214,7 @@ public class NLabScene extends GLCanvas {
 	        gl3.glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
 	        gl3.glEnable(GL3.GL_DEPTH_TEST);
 	        
-	        coord.lookAt(0, 0, -7f, 0, 0, 0, 0, 1.0f, 0, mViewMatrix);
+	        lookAt(0, 0, -7f, 0, 0, 0, 0, 1.0f, 0);
 	        
 //	        mProgramShader.init(gl3, 
 //	        		"D:\\Documents\\NautilusGraphicLab\\shaders\\vertex.shader", 

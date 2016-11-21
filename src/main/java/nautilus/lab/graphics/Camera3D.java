@@ -69,6 +69,7 @@ public class Camera3D {
 	private native void project(long address, float[] out, float objX, float objY, float objZ);
 	private native void projectOrthor(long address, float[] out, float objX, float objY, float objZ);
 	private native void rotate(long address, float yawR, float pitchR, float roll);
+	private native void rotate(long address, float[] ypr, float[] modelMatrix /*OUT*/);
 	private native void moveAlongForward(long address, float distance);
 	private native void jniRelease(long address);
 	
