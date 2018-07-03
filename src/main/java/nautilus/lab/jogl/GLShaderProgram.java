@@ -35,6 +35,7 @@ public class GLShaderProgram {
 			br = new BufferedReader(new FileReader(new File(filePath)));
 			while( (line = br.readLine()) != null ) {
 				result.append(line);
+				result.append("\n");
 			}
 		} catch(IOException ex) {
 			throw new RuntimeException(ex);
@@ -42,7 +43,8 @@ public class GLShaderProgram {
 			try {
 				if(br != null) br.close();
 			}catch(IOException ex2) {
-				throw new RuntimeException(ex2);
+//				throw new RuntimeException(ex2);
+                ex2.printStackTrace();
 			}
 		}
 		

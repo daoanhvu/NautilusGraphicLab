@@ -212,7 +212,7 @@ public class Matrix4 {
 		int j;
 		for (i = 0; i < 4; i++) {
 			j = i * 4;
-			invOut[j+0] = inv[j] * det;
+			invOut[j] = inv[j] * det;
 			invOut[j+1] = inv[j+1] * det;
 			invOut[j+2] = inv[j+2] * det;
 			invOut[j+3] = inv[j+3] * det;
@@ -278,4 +278,21 @@ public class Matrix4 {
 		m[10] = Result[10];
 		m[11] = Result[11];
 	}
+
+	public void normalize(float[] result, float a, float b, float c) {
+		float mag = (float)Math.sqrt(a*a + b*b + c*c);
+		result[0] = a/mag;
+		result[1] = b/mag;
+		result[2] = c/mag;
+	}
+
+    public void cross(float[] r, float[] v1, float[] v2) {
+        r[0] = v1[1]*v2[2]-v1[2]*v2[1];
+        r[1] = v1[2]*v2[0]-v1[0]*v2[2];
+        r[2] = v1[0]*v2[1]-v1[1]*v2[0];
+    }
+
+    public float dot(float[] v1, float[] v2) {
+	    return (v1[0]*v2[0] + v1[1]*v2[1] + v1[2]*v2[2]);
+    }
 }

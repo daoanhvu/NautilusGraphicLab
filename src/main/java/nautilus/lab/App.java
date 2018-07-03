@@ -81,7 +81,7 @@ public class App {
     }
 
     
-    public static void startJogl(){
+    static void startJogl(){
     	try {
 			SwingUtilities.invokeAndWait(new Runnable() {
 				public void run() {

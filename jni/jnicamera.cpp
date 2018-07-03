@@ -20,7 +20,7 @@ JNIEXPORT void JNICALL Java_nautilus_lab_graphics_Camera3D_lookAt__JFFFFFFFFF(JN
 	c->lookAt(ex, ey, ez, cx, cy, cz, ux, uy, uz);
 }
 
-/*
+/**
  * Class:     nautilus_lab_graphics_Camera3D
  * Method:    lookAt
  * Signature: (JFFFFFFFFF[F)V

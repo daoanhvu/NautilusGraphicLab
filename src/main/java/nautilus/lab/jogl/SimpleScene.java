@@ -1,24 +1,17 @@
 package nautilus.lab.jogl;
 
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.ShortBuffer;
-
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.FPSAnimator;
-
-import simplemath.math.ImageData;
 import simplemath.math.Matrix4;
-import nautilus.lab.graphics.Camera3D;
-import nautilus.util.GraphUtilites;
+
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import java.nio.*;
 
 /**
  * Ref: http://miksblog.capcaval.org/2013/07/jogl-gl3-sample/
@@ -26,66 +19,60 @@ import nautilus.util.GraphUtilites;
  *
  */
 
-public class NLabScene extends GLCanvas {
+public class SimpleScene extends GLCanvas {
 	private static final long serialVersionUID = 155L;
-	
+
 	static final int FPS_INTERVAL = 30;
-	
+
 	/** Additional constants. */
 	private static final int POSITION_HANDLE = 0;
-	private static final int NORMAL_HANDLE = 1;
-	private static final int COLOR_HANDLE = 2;
-	
+	private static final int COLOR_HANDLE = 1;
+
 	private static final int POSITION_DATA_SIZE_IN_ELEMENTS = 3;
-	private static final int NORMAL_DATA_SIZE_IN_ELEMENTS = 3;
-	public static final int BYTES_PER_FLOAT = 4;
-	public static final int BYTES_PER_SHORT = 2;
-	
+
 	//private Camera3D coord;
 	private GLShaderProgram mProgramShader;
-	
+
 	private int[] axesBufferIndex = new int[1];
 	private float[] axesVertices = new float[]{
-			0, 0, 0, 0, 1, 0, 1, 0, 0, 1,	1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 
-			0, 0, 0, 1, 0, 0, 0, 1, 0, 1,	0, 1, 0, 1, 0, 0, 0, 1, 0, 1,
-			0, 0, 0, 0, 1, 0, 0, 0, 1, 1,	0, 0, 1, 0, 1, 0, 0, 0, 1, 1
+			0, 0, 0, 1, 0, 0, 1,	1, 0, 0, 1, 0, 0, 1,
+			0, 0, 0, 0, 1, 0, 1,	0, 1, 0, 0, 1, 0, 1,
+			0, 0, 0, 0, 0, 1, 1,	0, 0, 1, 0, 0, 1, 1
 			};
-	
+
 	private final float[] mPerspectiveMatrix = new float[16];
 	private final float[] mModelView = new float[16];
 	private final float[] mViewMatrix = new float[16];
-	private final float[] mMVP = new float[16];
 	private final float[] mModel = new float[16];
-	
+
 	float[] lightPosInWorldSpace = {0f, 0f, 0f, 0f};
 	float[] lightPosInEyeSpace = {0f, 0f, 0f, 0f};
 	float rotX;
 	float rotY;
-	int uMVPHandle;
-	int uModelViewMatrixHandle;
-	int uLightPosHandle;
-	int uNeedLightingHandle;
-	
-	
+    int uModelHandler;
+    int uViewMatrixHandle;
+    int uPerspectiveHandler;
+
+
 	final float[] mRotationInversion = new float[16];
 	final float[] mTranslationM = new float[16];
 	final float[] mRotationM = new float[16];
 	final float[] mRotationAxisX = new float[4];
 	final float[] mRotationAxisY = new float[4];
-	
-	
+
+
 	final float[] mWorldRotationAxisX = {1, 0, 0, 0};
 	final float[] mWorldRotationAxisY = {0, 1, 0, 0};
-	
+
 	private float preMouseX;
 	private float preMouseY;
-	
+
 	final Matrix4 mMatrix4 = new Matrix4();
-	
+
 	//Animation control
 	final FPSAnimator animator;
 
-	public NLabScene(GLCapabilities caps) {
+	public SimpleScene(GLCapabilities caps) {
 		super(caps);
 		
 		mProgramShader = new GLShaderProgram();
@@ -244,17 +231,17 @@ public class NLabScene extends GLCanvas {
 		@Override
 		public void init(GLAutoDrawable drawable) {
 			GL3 gl3 = drawable.getGL().getGL3();
-	        gl3.glClearColor(0.392f, 0.584f, 0.929f, 1.0f);
+	        gl3.glClearColor(0.2f, 0.2f, 0.29f, 1.0f);
 	        gl3.glEnable(GL3.GL_DEPTH_TEST);
 	        
-	        lookAt(0, 0, -7f, 0, 0, 0, 0, 1.0f, 0);
+	        lookAt(0.5f, 0.5f, 3.0f, 0, 0, 0, 0, 1.0f, 0);
 	        mMatrix4.identity(mRotationM);
 	        mMatrix4.identity(mTranslationM);
 	        mMatrix4.identity(mModel);
 	        
 	        mProgramShader.init(gl3, 
-	        		"D:\\projects\\demo\\NautilusGraphicLab\\shaders\\vertex.shader",
-	        		"D:\\projects\\demo\\NautilusGraphicLab\\shaders\\fragment.shader");
+	        		"D:\\projects\\demo\\NautilusGraphicLab\\shaders\\simple_vertex_shader.glsl",
+	        		"D:\\projects\\demo\\NautilusGraphicLab\\shaders\\simple_fragment_shader.glsl");
 	        
 //	        mProgramShader.init(gl3, 
 //	        		"C:\\projects\\NautilusGraphicLab\\shaders\\vertex.shader", 
@@ -262,11 +249,13 @@ public class NLabScene extends GLCanvas {
 	        
 	        //IMPORTANT: set position for attribute
 	        mProgramShader.bindAttribLocation(gl3, POSITION_HANDLE,"aPosition");
-	        mProgramShader.bindAttribLocation(gl3, NORMAL_HANDLE, "aNormal");
 	        mProgramShader.bindAttribLocation(gl3, COLOR_HANDLE, "aColor");
-	        
-			
+
 	        gl3.glLinkProgram(mProgramShader.getProgramId());
+
+            uViewMatrixHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uViewMatrix");
+            uPerspectiveHandler = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uPerspective");
+            uModelHandler = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uModel");
 	        
 	        //initialize axes
 	        gl3.glGenBuffers(1, axesBufferIndex, 0);
@@ -289,46 +278,23 @@ public class NLabScene extends GLCanvas {
 //			System.out.println("Display: ");
 			
 			//Draw tasks go here
-			
-			uModelViewMatrixHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uModelView");
-			uMVPHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uMVP");
-			uLightPosHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uLightPos");
-			uNeedLightingHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uNeedLighting");
-			
 			mMatrix4.multiplyMM(mModelView, mViewMatrix, mModel);
-			mMatrix4.multiplyMM(mMVP, mPerspectiveMatrix, mModelView);
-			
-//			Matrix.multiplyMM(mMVP, 0, mOrthoMatrix, 0, mViewMatrix, 0);
-			
 			//Setting the camera
-			gl3.glUniformMatrix4fv(uMVPHandle, 1, false, mMVP, 0);
-			gl3.glUniformMatrix4fv(uModelViewMatrixHandle, 1, false, mModelView, 0);
-			
-			// Calculate position of the light. Push into the distance.
-//			Matrix.setIdentityM(lightModelMatrix, 0);
-			//Matrix.translateM(lightModelMatrix, 0, 0.1f, 2.5f, -3.0f);
-//			Matrix.multiplyMV(lightPosInWorldSpace, 0, lightModelMatrix, 0, lightPosInModelSpace, 0);
-//			Matrix.multiplyMV(lightPosInEyeSpace, 0, mViewMatrix, 0, lightPosInWorldSpace, 0);
-			mMatrix4.multiplyMV(lightPosInEyeSpace, mModelView, lightPosInWorldSpace);
-			
-			//Setting Light source
-			gl3.glUniform3f(uLightPosHandle, lightPosInEyeSpace[0], lightPosInEyeSpace[1],lightPosInEyeSpace[2]);
-			
-			gl3.glUniform1i(uNeedLightingHandle, 0);
-			
+			gl3.glUniformMatrix4fv(uModelHandler, 1, false, mModel, 0);
+			gl3.glUniformMatrix4fv(uViewMatrixHandle, 1, false, mViewMatrix, 0);
+            gl3.glUniformMatrix4fv(uPerspectiveHandler, 1, false, mPerspectiveMatrix, 0);
+
 			/* Draw coordinator */
+			int stride = 28;
 			gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, axesBufferIndex[0]);
 			gl3.glEnableVertexAttribArray(POSITION_HANDLE);
-			gl3.glVertexAttribPointer(POSITION_HANDLE, 3, GL3.GL_FLOAT, false, 40, 0);
-			gl3.glEnableVertexAttribArray(NORMAL_HANDLE);
-			gl3.glVertexAttribPointer(NORMAL_HANDLE, 3, GL3.GL_FLOAT, false, 40, 12);
+			gl3.glVertexAttribPointer(POSITION_HANDLE, 3, GL3.GL_FLOAT, false, stride, 0);
 			gl3.glEnableVertexAttribArray(COLOR_HANDLE);
-			gl3.glVertexAttribPointer(COLOR_HANDLE, 4, GL3.GL_FLOAT, false, 40, 24);
+			gl3.glVertexAttribPointer(COLOR_HANDLE, 4, GL3.GL_FLOAT, false, stride, 12);
 			gl3.glDrawArrays(GL3.GL_LINES, 0, 6);
 			
 			gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
 			gl3.glDisableVertexAttribArray(POSITION_HANDLE);
-		    gl3.glDisableVertexAttribArray(NORMAL_HANDLE);
 		    gl3.glDisableVertexAttribArray(COLOR_HANDLE);
 			/* End drawing the coordinator */
 			
@@ -342,19 +308,8 @@ public class NLabScene extends GLCanvas {
 	 * @param target one of value GLES20.GL_ARRAY_BUFFER or GLES20.GL_ELEMENT_ARRAY_BUFFER
 	 */
 	static void initVertexBuffer(GL3 gl3, int target, float[] data, int bufferId){
-		int size = data.length * BYTES_PER_FLOAT;
+		int size = data.length * Buffers.SIZEOF_FLOAT;
 		FloatBuffer fb = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder()).asFloatBuffer();
-		fb.put(data);
-		fb.position(0);
-		
-		gl3.glBindBuffer(target, bufferId);
-		gl3.glBufferData(target, size, fb, GL3.GL_STATIC_DRAW);
-		gl3.glBindBuffer(target, 0);
-	}
-	
-	static void initIndexBuffer(GL3 gl3, int target, short[] data, int bufferId){
-		int size = data.length * BYTES_PER_SHORT;
-		ShortBuffer fb = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder()).asShortBuffer();
 		fb.put(data);
 		fb.position(0);
 		

@@ -9,28 +9,11 @@
   <url>http://maven.apache.org</url>
   
   <properties>
-		<lib.directory>${project.build.directory}/lib</lib.directory>
+	  <lib.directory>${project.build.directory}/lib</lib.directory>
+	  <argLine>-Dfile.encoding=UTF-8</argLine>
 	</properties>
   
   <dependencies>
-  
-  	<dependency>
-      <groupId>jogl-natives</groupId>
-      <artifactId>jogl-natives</artifactId>
-      <version>2.1.4</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>jogl</groupId>
-      <artifactId>jogl</artifactId>
-      <version>2.1.4</version>
-    </dependency>
-	
-	<dependency>
-      <groupId>simplemath.math</groupId>
-      <artifactId>SimpleMath</artifactId>
-      <version>1.1-SNAPSHOT</version>
-    </dependency>
 	
 	<dependency>
       <groupId>junit</groupId>
@@ -88,7 +71,6 @@
 				<descriptorRefs>
 					<descriptorRef>jar-with-dependencies</descriptorRef>
 				</descriptorRefs>
-				<argLine>-Dfile.encoding=UTF-8</argLine>
 			</configuration>
 			<executions>
 				<execution>
@@ -104,8 +86,8 @@
 		<plugin>
 			<artifactId>maven-compiler-plugin</artifactId>
 			<configuration>
-				<source>1.7</source>
-				<target>1.7</target>
+				<source>1.8</source>
+				<target>1.8</target>
 			</configuration>
 		</plugin>
 	</plugins>

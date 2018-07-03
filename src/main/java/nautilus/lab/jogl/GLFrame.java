@@ -8,15 +8,17 @@ import javax.swing.JFrame;
 
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
+import nautilus.game.model.GameScene;
 
 public class GLFrame extends JFrame {
 	private static final long serialVersionUID = 107L;
 	
-	private NLabScene glCanvas;
-	
-	
-	private final int WIDTH = 800;
-	private final int HEIGHT = 600;
+//	private NLabScene glCanvas;
+	private GameScene glCanvas;
+//	private SimpleScene glCanvas;
+
+	private final int WIDTH = 1200;
+	private final int HEIGHT = 800;
 	
 	public GLFrame() {
 		initComponent();
@@ -33,7 +35,9 @@ public class GLFrame extends JFrame {
 		GLCapabilities caps = new GLCapabilities(glProfile);
 		
 		//glCanvas
-		glCanvas = new NLabScene(caps);
+		glCanvas = new GameScene(caps);
+//        glCanvas = new NLabScene(caps);
+//		glCanvas = new SimpleScene(caps);
 		glCanvas.requestFocusInWindow();
 		
 		c.add(glCanvas);
