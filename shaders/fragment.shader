@@ -7,6 +7,5 @@ in vec3 vNormal;
 in vec2 vUV;
 out vec4 fragColor;
 void main() {
-    //fragColor = texture(difSampler, vUV).rgba;
-    fragColor = vColor;
+    fragColor = texture(difSampler, vUV).rgba;
 }

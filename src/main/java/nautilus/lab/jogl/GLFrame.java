@@ -52,6 +52,7 @@ public class GLFrame extends JFrame {
 	               public void run() {
 	            	   glCanvas.stop(); // stop the animator loop
 	            	   System.exit(0);
+
 	               }
 	            }.start();
 	         }

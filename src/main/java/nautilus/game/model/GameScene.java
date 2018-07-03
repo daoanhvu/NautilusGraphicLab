@@ -89,8 +89,6 @@ public class GameScene extends GLCanvas {
 				float dx = evt.getX() - preMouseX;
 				float dy = evt.getY() - preMouseY;
 				
-				//coord.rotate(dx, dy, 0);
-				
 				rotX = -1 * dy /*pitchInRadian*/ * 0.05f;
 				rotY = -1 * dx /*yaw */ * 0.05f;
 				
@@ -149,11 +147,11 @@ public class GameScene extends GLCanvas {
 	        gl3.glClearColor(background[0], background[1], background[2], background[3]);
 	        gl3.glEnable(GL3.GL_DEPTH_TEST);
             gl3.glEnable(GL3.GL_CULL_FACE);
-//            gl3.glCullFace(GL3.GL_BACK);
-//            gl3.glFrontFace(GL3.GL_CW);
+            gl3.glCullFace(GL3.GL_BACK);
+            gl3.glFrontFace(GL3.GL_CW);
 //            gl3.glDepthMask(true);
 
-            camera.lookAt(0.1f, 0.5f, 3f, 0, 0, 0, 0, 1.0f, 0);
+            camera.lookAt(0.00001f, 2.5f, 0.0f, 0, 0, 0, 0, 1.0f, 0);
             matrixUtil.identity(mRotationM);
             matrixUtil.identity(mTranslationM);
             matrixUtil.identity(mModel);
