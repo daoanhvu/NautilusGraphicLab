@@ -15,6 +15,7 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.FPSAnimator;
 
+import nautilus.lab.component.CommandListener;
 import simplemath.math.ImageData;
 import simplemath.math.Matrix4;
 import nautilus.lab.graphics.Camera3D;
@@ -26,7 +27,7 @@ import nautilus.util.GraphUtilites;
  *
  */
 
-public class NLabScene extends GLCanvas {
+public class NLabScene extends GLCanvas implements CommandListener {
 	private static final long serialVersionUID = 155L;
 	
 	static final int FPS_INTERVAL = 30;
@@ -361,5 +362,30 @@ public class NLabScene extends GLCanvas {
 		gl3.glBindBuffer(target, bufferId);
 		gl3.glBufferData(target, size, fb, GL3.GL_STATIC_DRAW);
 		gl3.glBindBuffer(target, 0);
+	}
+
+	@Override
+	public void onRotateCommand(double theta, double rvx, double rvy, double rvz) {
+
+	}
+
+	@Override
+	public void onRotateCommand(double theta, double px, double py, double pz, double rvx, double rvy, double rvz) {
+
+	}
+
+	@Override
+	public void onNFunctionChange(String strFunct, float[] boundaries) {
+
+	}
+
+	@Override
+	public void onAddVertexCommand(double vx, double vy, double vz) {
+
+	}
+
+	@Override
+	public void onAddLineCommand() {
+
 	}
 }

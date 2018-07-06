@@ -1,5 +1,6 @@
 package nautilus.lab.component;
 
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,14 +12,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 
-public class CommandPane extends Panel{
-	
-	/**
-	 * 
-	 */
+public class CommandPane extends JPanel{
+
 	private static final long serialVersionUID = 100L;
 	
-	private TextField txtCommand;
+	private JTextField txtCommand;
 	private Font font = null;
 	
 	private CommandListener commandListener = null;
@@ -26,7 +24,7 @@ public class CommandPane extends Panel{
 	public CommandPane(){
 		setPreferredSize(new Dimension(400, 32));
 		this.setLayout(new BorderLayout());
-		txtCommand = new TextField();
+		txtCommand = new JTextField();
 		txtCommand.addKeyListener(keyListener);
 		add(txtCommand, BorderLayout.CENTER);
 		try {

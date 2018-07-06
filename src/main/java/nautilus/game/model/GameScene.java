@@ -4,6 +4,8 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
+import nautilus.lab.component.CommandListener;
+import nautilus.lab.jogl.Coordinator3D;
 import nautilus.lab.jogl.GLShaderProgram;
 import simplemath.math.Matrix4;
 
@@ -19,7 +21,7 @@ import java.nio.FloatBuffer;
  *
  */
 
-public class GameScene extends GLCanvas {
+public class GameScene extends GLCanvas implements CommandListener {
 	private static final long serialVersionUID = 155L;
 
 	static final int FPS_INTERVAL = 30;
@@ -36,7 +38,7 @@ public class GameScene extends GLCanvas {
 	private final DefaultCamera camera = new DefaultCamera();
 	private GLShaderProgram mProgramShader;
 
-    Coordinator coord;
+    Coordinator3D coord;
 	BattleMap battleMap;
 
 	private float[] background = {0.2f, 0.2f, 0.2f, 1.0f};
@@ -89,8 +91,8 @@ public class GameScene extends GLCanvas {
 				float dx = evt.getX() - preMouseX;
 				float dy = evt.getY() - preMouseY;
 				
-				rotX = -1 * dy /*pitchInRadian*/ * 0.05f;
-				rotY = -1 * dx /*yaw */ * 0.05f;
+				rotX = dy /*pitchInRadian*/ * 0.0005f;
+				rotY = dx /*yaw */ * 0.0005f;
 				
 				System.out.println("Rotate: " + rotX + "," + rotY);
 
@@ -111,7 +113,7 @@ public class GameScene extends GLCanvas {
         matrixUtil.identity(mModel);
         matrixUtil.identity(mRotationM);
 
-        coord = new Coordinator();
+        coord = new Coordinator3D();
 
 		int mapData[][] = {
                 {1, 1, 1, 1, 1, 1, 1},
@@ -211,7 +213,6 @@ public class GameScene extends GLCanvas {
 			
 			//Setting Light source
 			gl3.glUniform3f(uLightPosHandle, lightPosInEyeSpace[0], lightPosInEyeSpace[1],lightPosInEyeSpace[2]);
-//			gl3.glUniform1i(uNeedLightingHandle, 0);
 
             coord.render(gl3, POSITION_HANDLE, NORMAL_HANDLE, COLOR_HANDLE);
 			battleMap.render(gl3);
@@ -225,46 +226,29 @@ public class GameScene extends GLCanvas {
 			gl3.glFlush();
 		}
 	};
-}
 
-class Coordinator {
-    private float[] axesVertices = new float[]{
-            0, 0, 0, 0, 1, 0, 1, 0, 0, 1,	1, 0, 0, 0, 1, 0, 1, 0, 0, 1,
-            0, 0, 0, 1, 0, 0, 0, 1, 0, 1,	0, 1, 0, 1, 0, 0, 0, 1, 0, 1,
-            0, 0, 0, 0, 1, 0, 0, 0, 1, 1,	0, 0, 1, 0, 1, 0, 0, 0, 1, 1
-    };
-    private int[] buffers = new int[1];
-    private final int STRIDE = 10 * Buffers.SIZEOF_FLOAT;
+	@Override
+	public void onRotateCommand(double theta, double rvx, double rvy, double rvz) {
 
-    public void initialize(GL3 gl3) {
-        gl3.glGenBuffers(1, buffers, 0);
-        //init vertex buffer
-        int size = axesVertices.length * Buffers.SIZEOF_FLOAT; //BYTES_PER_FLOAT
-        FloatBuffer floatBuffer = ByteBuffer.allocateDirect(size).order(ByteOrder.nativeOrder()).asFloatBuffer();
-        floatBuffer.put(axesVertices);
-        floatBuffer.position(0);
-        gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, buffers[0]);
-        gl3.glBufferData(GL3.GL_ARRAY_BUFFER, size, floatBuffer, GL3.GL_STATIC_DRAW);
-        gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
-    }
+	}
 
-    public void render(GL3 gl3,
-                       int positionHandler,
-                       int normalHandler,
-                       int colorHandler) {
+	@Override
+	public void onRotateCommand(double theta, double px, double py, double pz, double rvx, double rvy, double rvz) {
 
-        gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, buffers[0]);
-        gl3.glEnableVertexAttribArray(positionHandler);
-        gl3.glVertexAttribPointer(positionHandler, 3, GL3.GL_FLOAT, false, STRIDE, 0);
+	}
 
-        gl3.glEnableVertexAttribArray(normalHandler);
-        gl3.glVertexAttribPointer(normalHandler, 3, GL3.GL_FLOAT, false, STRIDE, 12);
+	@Override
+	public void onNFunctionChange(String strFunct, float[] boundaries) {
 
-        gl3.glEnableVertexAttribArray(colorHandler);
-        gl3.glVertexAttribPointer(colorHandler, 4, GL3.GL_FLOAT, false, STRIDE, 24);
+	}
 
-        gl3.glDrawArrays(GL3.GL_LINES, 0, axesVertices.length);
+	@Override
+	public void onAddVertexCommand(double vx, double vy, double vz) {
 
-        gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
-    }
+	}
+
+	@Override
+	public void onAddLineCommand() {
+
+	}
 }

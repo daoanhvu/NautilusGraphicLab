@@ -25,6 +25,14 @@ public class Tank extends MovingObject {
 
     @Override
     public boolean load() {
+        //x y z
+        vertices = new float[]{
+            -1.5f, -0.1f, 1f, 0f, 0f,    -1.5f, -0.1f, -1f, 0f, 1f,
+            1.5f, -0.1f, -1f, 1f, 1f,    1.5f, -0.1f, 1f, 1f, 0f,
+        };
+
+        //initialize texture
+
         return false;
     }
 
