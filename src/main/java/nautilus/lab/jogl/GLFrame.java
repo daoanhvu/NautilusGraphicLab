@@ -10,13 +10,12 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import nautilus.game.model.GameScene;
 import nautilus.lab.component.CommandPane;
+import nautilus.lab.component.Scene3D;
 
 public class GLFrame extends JFrame {
 	private static final long serialVersionUID = 107L;
 	
-//	private NLabScene glCanvas;
-	private GameScene glCanvas;
-//	private SimpleScene glCanvas;
+	private Scene3D glCanvas;
 
 	private final int WIDTH = 1200;
 	private final int HEIGHT = 800;
@@ -79,8 +78,8 @@ public class GLFrame extends JFrame {
 		GLCapabilities caps = new GLCapabilities(glProfile);
 		
 		//glCanvas
-		glCanvas = new GameScene(caps);
-//        glCanvas = new NLabScene(caps);
+//		glCanvas = new GameScene(caps);
+        glCanvas = new NLabScene(caps);
 //		glCanvas = new SimpleScene(caps);
 		glCanvas.requestFocusInWindow();
 		

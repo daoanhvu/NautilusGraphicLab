@@ -31,16 +31,12 @@ public class ImageOpenFilter extends FileFilter implements java.io.FileFilter {
  
         String extension = getExtension(f);
         if (extension != null) {
-            if (extension.equals(tiff) ||
-                extension.equals(tif) ||
-                extension.equals(gif) ||
-                extension.equals(jpeg) ||
-                extension.equals(jpg) ||
-                extension.equals(png)) {
-                    return true;
-            } else {
-                return false;
-            }
+            return extension.equals(tiff) ||
+                    extension.equals(tif) ||
+                    extension.equals(gif) ||
+                    extension.equals(jpeg) ||
+                    extension.equals(jpg) ||
+                    extension.equals(png);
         }
  
         return false;

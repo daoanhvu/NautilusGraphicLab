@@ -17,30 +17,25 @@ public class CommandPane extends JPanel{
 	private static final long serialVersionUID = 100L;
 	
 	private JTextField txtCommand;
-	private Font font = null;
-	
 	private CommandListener commandListener = null;
 	
-	public CommandPane(){
-		setPreferredSize(new Dimension(400, 32));
+	public CommandPane() {
+		Font font;
+		setPreferredSize(new Dimension(400, 48));
 		this.setLayout(new BorderLayout());
 		txtCommand = new JTextField();
 		txtCommand.addKeyListener(keyListener);
 		add(txtCommand, BorderLayout.CENTER);
 		try {
 			font = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("ncc.ttf"));
-			
 			//txtCommand.setFont(font.deriveFont(Font.BOLD, 16));
-			txtCommand.setFont(font.deriveFont(17f));
+			txtCommand.setFont(font.deriveFont(29.0f));
 			txtCommand.setForeground(new Color(20, 23, 203));
-		} catch (FontFormatException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (FontFormatException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+    }
 	
 	private KeyListener keyListener = new KeyListener(){
 
@@ -59,9 +54,7 @@ public class CommandPane extends JPanel{
 		@Override
 		public void keyTyped(KeyEvent e) {
 			// TODO Auto-generated method stub
-			
 		}
-	
 	};
 	
 	public void setCommandListener(CommandListener l){

@@ -5,6 +5,7 @@ import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
 import nautilus.lab.component.CommandListener;
+import nautilus.lab.component.Scene3D;
 import nautilus.lab.jogl.Coordinator3D;
 import nautilus.lab.jogl.GLShaderProgram;
 import simplemath.math.Matrix4;
@@ -21,27 +22,17 @@ import java.nio.FloatBuffer;
  *
  */
 
-public class GameScene extends GLCanvas implements CommandListener {
+public class GameScene extends Scene3D implements CommandListener {
 	private static final long serialVersionUID = 155L;
 
 	static final int FPS_INTERVAL = 30;
 
-	/** Additional constants. */
-	private static final int POSITION_HANDLE = 0;
-	private static final int NORMAL_HANDLE = 1;
-	private static final int COLOR_HANDLE = 2;
-	private static final int UV_HANDLE = 3;
-
 	private static final int POSITION_DATA_SIZE_IN_ELEMENTS = 3;
 	private static final int NORMAL_DATA_SIZE_IN_ELEMENTS = 3;
-
-	private final DefaultCamera camera = new DefaultCamera();
-	private GLShaderProgram mProgramShader;
 
     Coordinator3D coord;
 	BattleMap battleMap;
 
-	private float[] background = {0.2f, 0.2f, 0.2f, 1.0f};
 	private final float[] mModelView = new float[16];
 	private final float[] mModel = new float[16];
 
@@ -71,9 +62,6 @@ public class GameScene extends GLCanvas implements CommandListener {
 	private float preMouseY;
 
 	final Matrix4 matrixUtil = new Matrix4();
-
-	//Animation control
-	final FPSAnimator animator;
 
 	public GameScene(GLCapabilities caps) {
 		super(caps);
@@ -126,14 +114,6 @@ public class GameScene extends GLCanvas implements CommandListener {
 		animator = new FPSAnimator(this, FPS_INTERVAL, true);
 	}
 	
-	public void start() {
-		animator.start();
-	}
-	
-	public void stop() {
-		animator.stop();
-	}
-	
 	private GLEventListener glListener = new GLEventListener() {
 		
 		@Override
@@ -165,12 +145,8 @@ public class GameScene extends GLCanvas implements CommandListener {
 //	        mProgramShader.init(gl3, 
 //	        		"C:\\projects\\NautilusGraphicLab\\shaders\\vertex.shader", 
 //	        		"C:\\projects\\NautilusGraphicLab\\shaders\\fragment.shader");
-	        
-	        //IMPORTANT: set position for attribute
-	        mProgramShader.bindAttribLocation(gl3, POSITION_HANDLE,"aPosition");
-	        mProgramShader.bindAttribLocation(gl3, NORMAL_HANDLE, "aNormal");
-	        mProgramShader.bindAttribLocation(gl3, COLOR_HANDLE, "aColor");
-            mProgramShader.bindAttribLocation(gl3, UV_HANDLE, "aUV");
+
+            bindAttributeLocations(gl3);
 			
 	        gl3.glLinkProgram(mProgramShader.getProgramId());
 
@@ -181,15 +157,17 @@ public class GameScene extends GLCanvas implements CommandListener {
             uModelHandler = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uModel");
             uLightPosHandle = gl3.glGetUniformLocation(mProgramShader.getProgramId(), "uLightPos");
 
-            coord.initialize(gl3);
+            coord.initialize(gl3, positionHandler, colorHandler,
+                    uUseTextureHandler);
 
-            battleMap.setHandlers(POSITION_HANDLE, UV_HANDLE);
+            battleMap.setHandlers(positionHandler, textureHandler);
 	        battleMap.initialize(gl3, difSampler);
 		}
 		
 		@Override
 		public void dispose(GLAutoDrawable drawable) {
 			GL3 gl3 = drawable.getGL().getGL3();
+			coord.release(gl3);
 			gl3.glUseProgram(0);
 			mProgramShader.dispose(gl3);
 		}
@@ -211,16 +189,17 @@ public class GameScene extends GLCanvas implements CommandListener {
 
             matrixUtil.multiplyMV(lightPosInEyeSpace, mModelView, lightPosInWorldSpace);
 			
-			//Setting Light source
+			//Setting LightSource source
 			gl3.glUniform3f(uLightPosHandle, lightPosInEyeSpace[0], lightPosInEyeSpace[1],lightPosInEyeSpace[2]);
 
-            coord.render(gl3, POSITION_HANDLE, NORMAL_HANDLE, COLOR_HANDLE);
+            coord.render(gl3);
 			battleMap.render(gl3);
 			
 			gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
-			gl3.glDisableVertexAttribArray(POSITION_HANDLE);
-		    gl3.glDisableVertexAttribArray(NORMAL_HANDLE);
-		    gl3.glDisableVertexAttribArray(COLOR_HANDLE);
+			gl3.glDisableVertexAttribArray(positionHandler);
+		    gl3.glDisableVertexAttribArray(normalHandler);
+		    gl3.glDisableVertexAttribArray(colorHandler);
+            gl3.glDisableVertexAttribArray(textureHandler);
 			/* End drawing the coordinator */
 			
 			gl3.glFlush();

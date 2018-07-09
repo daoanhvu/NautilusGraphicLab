@@ -28,7 +28,7 @@ public class DefaultCamera {
         return mPerspectiveMatrix;
     }
 
-    void lookAt(float ex, float ey, float ez,
+    public void lookAt(float ex, float ey, float ez,
                 float cx, float cy, float cz,
                 float ux, float uy, float uz) {
         float[] f = {0, 0, 0};
