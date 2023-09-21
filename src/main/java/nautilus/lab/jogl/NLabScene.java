@@ -2,6 +2,7 @@ package nautilus.lab.jogl;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -66,14 +67,109 @@ public class NLabScene extends Scene3D implements CommandListener {
 	
 	final Matrix4 mMatrix4 = new Matrix4();
 
-	public NLabScene(GLCapabilities caps) {
+	private final String shaderScriptFolder;
+
+	public NLabScene(String shaderScriptFolder, GLCapabilities caps) {
 		super(caps);
+
+		this.shaderScriptFolder = shaderScriptFolder;
 		
 		mProgramShader = new GLShaderProgram();
 		
 		//Init camera
 		//coord = new Camera3D();
-		
+
+		//IMPORTANT: set position for attribute
+		//Setting the camera
+		// Calculate position of the light. Push into the distance.
+		//			Matrix.setIdentityM(lightModelMatrix, 0);
+		//Matrix.translateM(lightModelMatrix, 0, 0.1f, 2.5f, -3.0f);
+		//			Matrix.multiplyMV(lightPosInWorldSpace, 0, lightModelMatrix, 0, lightPosInModelSpace, 0);
+		//			Matrix.multiplyMV(lightPosInEyeSpace, 0, mViewMatrix, 0, lightPosInWorldSpace, 0);
+		//Setting LightSource source
+		//			gl3.glUniform3f(uLightPosHandle, lightPosInEyeSpace[0], lightPosInEyeSpace[1],lightPosInEyeSpace[2]);
+		//			gl3.glUniform1i(uNeedLightingHandle, 0);
+		/* End drawing the coordinator */
+		GLEventListener glListener = new GLEventListener() {
+
+			@Override
+			public void reshape(GLAutoDrawable drawable, int arg1, int arg2, int w, int h) {
+
+				GL3 gl3 = drawable.getGL().getGL3();
+				gl3.glViewport(0, 0, w, h);
+				camera.setPerspectiveMatrix(0.1f, 9.0f, w, h);
+			}
+
+			@Override
+			public void init(GLAutoDrawable drawable) {
+
+				GL3 gl3 = drawable.getGL().getGL3();
+				gl3.glClearColor(background[0], background[1], background[2], background[3]);
+				gl3.glEnable(GL3.GL_DEPTH_TEST);
+
+				camera.lookAt(0.3f, 0.1f, 3f, 0, 0, 0, 0, 1.0f, 0);
+				mMatrix4.identity(mRotationM);
+				mMatrix4.identity(mTranslationM);
+				mMatrix4.identity(mModel);
+
+				File folder = new File(shaderScriptFolder);
+
+				mProgramShader.init(gl3, folder, "simple_vertex_shader.glsl", "simple_fragment_shader.glsl");
+
+				gl3.glLinkProgram(mProgramShader.getProgramId());
+				//IMPORTANT: set position for attribute
+				bindAttributeLocations(gl3);
+				bindUniformHandlers(gl3);
+
+				coord.initialize(gl3, positionHandler, colorHandler,
+						uUseTextureHandler);
+			}
+
+			@Override
+			public void dispose(GLAutoDrawable drawable) {
+
+				GL3 gl3 = drawable.getGL().getGL3();
+				gl3.glUseProgram(0);
+				mProgramShader.dispose(gl3);
+			}
+
+			@Override
+			public void display(GLAutoDrawable drawable) {
+
+				GL3 gl3 = drawable.getGL().getGL3();
+				gl3.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
+				gl3.glUseProgram(mProgramShader.getProgramId());
+
+				//Setting the camera
+				gl3.glUniformMatrix4fv(uViewMatrixHandle, 1, false, camera.getViewMatrix(), 0);
+				gl3.glUniformMatrix4fv(uPerspectiveHandler, 1, false, camera.getPerspective(), 0);
+				gl3.glUniformMatrix4fv(uModelHandler, 1, false, mModel, 0);
+
+				// Calculate position of the light. Push into the distance.
+				//			Matrix.setIdentityM(lightModelMatrix, 0);
+				//Matrix.translateM(lightModelMatrix, 0, 0.1f, 2.5f, -3.0f);
+				//			Matrix.multiplyMV(lightPosInWorldSpace, 0, lightModelMatrix, 0, lightPosInModelSpace, 0);
+				//			Matrix.multiplyMV(lightPosInEyeSpace, 0, mViewMatrix, 0, lightPosInWorldSpace, 0);
+				mMatrix4.multiplyMV(lightPosInEyeSpace, mModelView, lightPosInWorldSpace);
+
+				//Setting LightSource source
+				gl3.glUniform1i(uNumOfLightHandler, lightSources.size());
+				//			gl3.glUniform3f(uLightPosHandle, lightPosInEyeSpace[0], lightPosInEyeSpace[1],lightPosInEyeSpace[2]);
+				//			gl3.glUniform1i(uNeedLightingHandle, 0);
+
+				coord.render(gl3);
+
+				gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
+				gl3.glDisableVertexAttribArray(positionHandler);
+				gl3.glDisableVertexAttribArray(normalHandler);
+				gl3.glDisableVertexAttribArray(colorHandler);
+				gl3.glDisableVertexAttribArray(textureHandler);
+				/* End drawing the coordinator */
+
+				gl3.glFlush();
+
+			}
+		};
 		addGLEventListener(glListener);
 		
 		addMouseMotionListener(new MouseMotionListener(){
@@ -113,83 +209,6 @@ public class NLabScene extends Scene3D implements CommandListener {
 		
 		animator = new FPSAnimator(this, FPS_INTERVAL, true);
 	}
-
-	private GLEventListener glListener = new GLEventListener() {
-		
-		@Override
-		public void reshape(GLAutoDrawable drawable, int arg1, int arg2, int w, int h) {
-			GL3 gl3 = drawable.getGL().getGL3();
-			gl3.glViewport(0, 0, w, h);
-            camera.setPerspectiveMatrix(0.1f, 9.0f, w, h);
-		}
-		
-		@Override
-		public void init(GLAutoDrawable drawable) {
-			GL3 gl3 = drawable.getGL().getGL3();
-			gl3.glClearColor(background[0], background[1], background[2], background[3]);
-	        gl3.glEnable(GL3.GL_DEPTH_TEST);
-	        
-	        camera.lookAt(0.3f, 0.1f, 3f, 0, 0, 0, 0, 1.0f, 0);
-	        mMatrix4.identity(mRotationM);
-	        mMatrix4.identity(mTranslationM);
-	        mMatrix4.identity(mModel);
-	        
-	        mProgramShader.init(gl3, 
-	        		"D:\\projects\\demo\\NautilusGraphicLab\\shaders\\simple_vertex_shader.glsl",
-	        		"D:\\projects\\demo\\NautilusGraphicLab\\shaders\\simple_fragment_shader.glsl");
-
-            gl3.glLinkProgram(mProgramShader.getProgramId());
-	        //IMPORTANT: set position for attribute
-            bindAttributeLocations(gl3);
-            bindUniformHandlers(gl3);
-
-            coord.initialize(gl3, positionHandler, colorHandler,
-                    uUseTextureHandler);
-		}
-		
-		@Override
-		public void dispose(GLAutoDrawable drawable) {
-			GL3 gl3 = drawable.getGL().getGL3();
-			gl3.glUseProgram(0);
-			mProgramShader.dispose(gl3);
-		}
-		
-		@Override
-		public void display(GLAutoDrawable drawable) {
-			GL3 gl3 = drawable.getGL().getGL3();			
-			gl3.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
-			gl3.glUseProgram(mProgramShader.getProgramId());
-
-			//Setting the camera
-			gl3.glUniformMatrix4fv(uViewMatrixHandle, 1, false, camera.getViewMatrix(), 0);
-			gl3.glUniformMatrix4fv(uPerspectiveHandler, 1, false, camera.getPerspective(), 0);
-            gl3.glUniformMatrix4fv(uModelHandler, 1, false, mModel, 0);
-			
-			// Calculate position of the light. Push into the distance.
-//			Matrix.setIdentityM(lightModelMatrix, 0);
-			//Matrix.translateM(lightModelMatrix, 0, 0.1f, 2.5f, -3.0f);
-//			Matrix.multiplyMV(lightPosInWorldSpace, 0, lightModelMatrix, 0, lightPosInModelSpace, 0);
-//			Matrix.multiplyMV(lightPosInEyeSpace, 0, mViewMatrix, 0, lightPosInWorldSpace, 0);
-			mMatrix4.multiplyMV(lightPosInEyeSpace, mModelView, lightPosInWorldSpace);
-			
-			//Setting LightSource source
-            gl3.glUniform1i(uNumOfLightHandler, lightSources.size());
-//			gl3.glUniform3f(uLightPosHandle, lightPosInEyeSpace[0], lightPosInEyeSpace[1],lightPosInEyeSpace[2]);
-//			gl3.glUniform1i(uNeedLightingHandle, 0);
-
-            coord.render(gl3);
-
-			gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
-			gl3.glDisableVertexAttribArray(positionHandler);
-		    gl3.glDisableVertexAttribArray(normalHandler);
-		    gl3.glDisableVertexAttribArray(colorHandler);
-			gl3.glDisableVertexAttribArray(textureHandler);
-			/* End drawing the coordinator */
-			
-			gl3.glFlush();
-			
-		}
-	};
 
 	@Override
 	public void onRotateCommand(double theta, double rvx, double rvy, double rvz) {

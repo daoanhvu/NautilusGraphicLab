@@ -1,16 +1,20 @@
 package nautilus.lab.jogl;
 
-import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-import javax.swing.*;
-
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
-import nautilus.game.model.GameScene;
 import nautilus.lab.component.CommandPane;
 import nautilus.lab.component.Scene3D;
+
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.UIManager;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class GLFrame extends JFrame {
 	private static final long serialVersionUID = 107L;
@@ -33,9 +37,9 @@ public class GLFrame extends JFrame {
 
     private CommandPane commandPane;
 	
-	public GLFrame() {
+	public GLFrame(String shaderFolder) {
 		super("Nautilus Graphics Lab 1.0");
-		initComponent();
+		initComponent(shaderFolder);
 	}
 
 	private void setupMenu() {
@@ -64,7 +68,7 @@ public class GLFrame extends JFrame {
 		this.setJMenuBar(menuBar);
 	}
 	
-	private void initComponent() {
+	private void initComponent(String shaderFolder) {
 		Container c = this.getContentPane();
 		this.setSize(WIDTH, HEIGHT);
 //		c.setBounds(0, 0, WIDTH, HEIGHT);
@@ -79,7 +83,7 @@ public class GLFrame extends JFrame {
 		
 		//glCanvas
 //		glCanvas = new GameScene(caps);
-        glCanvas = new NLabScene(caps);
+        glCanvas = new NLabScene(shaderFolder, caps);
 //		glCanvas = new SimpleScene(caps);
 		glCanvas.requestFocusInWindow();
 		

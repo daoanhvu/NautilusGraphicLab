@@ -12,6 +12,7 @@ import simplemath.math.Matrix4;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -63,8 +64,11 @@ public class GameScene extends Scene3D implements CommandListener {
 
 	final Matrix4 matrixUtil = new Matrix4();
 
-	public GameScene(GLCapabilities caps) {
+	private final String shaderFolder;
+
+	public GameScene(String shaderFolder, GLCapabilities caps) {
 		super(caps);
+		this.shaderFolder = shaderFolder;
 		
 		mProgramShader = new GLShaderProgram();
 		
@@ -138,13 +142,7 @@ public class GameScene extends Scene3D implements CommandListener {
             matrixUtil.identity(mTranslationM);
             matrixUtil.identity(mModel);
 	        
-	        mProgramShader.init(gl3, 
-	        		"D:\\projects\\demo\\NautilusGraphicLab\\shaders\\vertex.shader",
-	        		"D:\\projects\\demo\\NautilusGraphicLab\\shaders\\fragment.shader");
-	        
-//	        mProgramShader.init(gl3, 
-//	        		"C:\\projects\\NautilusGraphicLab\\shaders\\vertex.shader", 
-//	        		"C:\\projects\\NautilusGraphicLab\\shaders\\fragment.shader");
+	        mProgramShader.init(gl3, new File(shaderFolder), "vertex.shader", "fragment.shader");
 
             bindAttributeLocations(gl3);
 			

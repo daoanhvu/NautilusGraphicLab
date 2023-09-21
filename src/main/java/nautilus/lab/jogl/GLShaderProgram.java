@@ -17,9 +17,9 @@ public class GLShaderProgram {
 		
 	}
 	
-	public void init(GL3 gl3, String vShaderPath, String fShaderPath) {
-		String vShaderCode = loadShaderFromFile(vShaderPath);
-		String fShaderCode = loadShaderFromFile(fShaderPath);
+	public void init(GL3 gl3, File shaderFolder, String vShaderPath, String fShaderPath) {
+		String vShaderCode = loadShaderFromFile(shaderFolder, vShaderPath);
+		String fShaderCode = loadShaderFromFile(shaderFolder, fShaderPath);
 		mProgramId = gl3.glCreateProgram();
 		mVertextShaderId = loadShader(gl3, GL3.GL_VERTEX_SHADER, vShaderCode);
 		mFragmentShaderId = loadShader(gl3, GL3.GL_FRAGMENT_SHADER, fShaderCode);
@@ -27,12 +27,12 @@ public class GLShaderProgram {
 		gl3.glAttachShader(mProgramId, mFragmentShaderId);
 	}
 	
-	private String loadShaderFromFile(String filePath) {
+	private String loadShaderFromFile(File shaderFolder, String filePath) {
 		StringBuilder result = new StringBuilder();
 		BufferedReader br = null;
 		try {
 			String line;
-			br = new BufferedReader(new FileReader(new File(filePath)));
+			br = new BufferedReader(new FileReader(new File(shaderFolder, filePath)));
 			while( (line = br.readLine()) != null ) {
 				result.append(line);
 				result.append("\n");
