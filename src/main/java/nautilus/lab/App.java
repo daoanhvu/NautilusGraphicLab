@@ -1,26 +1,12 @@
 package nautilus.lab;
 
-import java.awt.BorderLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
-
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-
-import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import simplemath.math.Function;
-import simplemath.math.ImageData;
 import nautilus.lab.component.LabFrame;
 import nautilus.lab.component.MapBuilderFrame;
 import nautilus.lab.formula.TestFormulaFrame;
 import nautilus.lab.jogl.GLFrame;
-import nautilus.lab.jogl.NLabScene;
+
+import javax.swing.SwingUtilities;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Dao Anh Vu

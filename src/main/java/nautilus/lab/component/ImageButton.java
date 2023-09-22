@@ -81,13 +81,13 @@ public class ImageButton extends AbstractImageButton {
         g.fillRect(0, 0, getSize().width, getSize().height);
         		
             // paint focus of button
-        if (this.hasFocus == true) {
+        if (this.hasFocus) {
             g.setColor(BUTTON_FOCUS_COLOR);
             g.drawRect(0, 0, getSize().width - 1, getSize().height - 1);	
         }
         		
             // draw the perimeter of the button
-        if (this.isPressed == true && this.insideButton == true) {
+        if (this.isPressed && this.insideButton) {
             colorUpperBorder = BUTTON_DARK_COLOR;
             colorLowerBorder = BUTTON_BRIGHT_COLOR;
         }
@@ -103,8 +103,7 @@ public class ImageButton extends AbstractImageButton {
         g.drawLine(2, getSize().height - 2, getSize().width - 2, getSize().height - 2);
         		
             // paint the interior of the button
-        if (this.image == null &&
-            this.isPressed == true && this.insideButton == true)  {
+        if (this.image == null && this.isPressed && this.insideButton)  {
             g.setColor(BUTTON_HIGHLIGHT_COLOR);
         }
         else {
@@ -120,7 +119,7 @@ public class ImageButton extends AbstractImageButton {
                         this);
         }
             // is button disabled?
-        if (isEnabled() == false)  {
+        if (!isEnabled())  {
             g.setColor(BACKGROUND_COLOR);
             g.setClip(2, 2, getSize().width - 4, getSize().height - 4);
             for(int i=2; i <= getSize().width + getSize().height - 4; i = i + 2) {
@@ -135,7 +134,7 @@ public class ImageButton extends AbstractImageButton {
     public void processMouseEvent(MouseEvent e) {
         switch(e.getID()) {
             case MouseEvent.MOUSE_PRESSED:
-                if (isEnabled() == true) {
+                if (isEnabled()) {
                         // process only if Button1 is pressed
                         // additional compare to 0 because of a bug in Netscape4.7-LINUX
                     if ((e.getModifiers() & InputEvent.BUTTON1_MASK) != 0 ||
@@ -158,7 +157,7 @@ public class ImageButton extends AbstractImageButton {
                             						
                             // send actionEvent only if MouseButton1 is
                             // released inside ImageButton
-                        if((this.insideButton == true) && (this.actionListener != null)) {
+                        if((this.insideButton) && (this.actionListener != null)) {
                             this.actionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, this.actionCommand));
                         }
                            					
@@ -170,14 +169,14 @@ public class ImageButton extends AbstractImageButton {
             				
             case MouseEvent.MOUSE_ENTERED:
                 this.insideButton = true;
-                if (this.isPressed == true) {
+                if (this.isPressed) {
                     repaint();
                 }
                 break;
             				
             case MouseEvent.MOUSE_EXITED:
                 this.insideButton = false;
-                if (this.isPressed == true) {
+                if (this.isPressed) {
                     repaint();
                 }
                 break;
