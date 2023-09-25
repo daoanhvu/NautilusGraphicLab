@@ -12,8 +12,12 @@ import java.lang.reflect.InvocationTargetException;
  * Dao Anh Vu
  */
 public class App {
-    public static void main( String[] args ){
-    	startJogl();
+    public static void main(String[] args) {
+		String shaderFolder = "";
+		if(args.length > 0) {
+			shaderFolder = args[0];
+		}
+    	startJogl(shaderFolder);
     	//buildIndicesForTriangleStrip(3, 3);
 //    	startAWT();
 //    	startMapBuilderFrame();
@@ -28,14 +32,11 @@ public class App {
 					testFormulaFrm.setVisible(true);
 				}
 			});
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }
+	}
     
     static void buildIndicesForTriangleStrip(int yLength, int xLength) {
     	// Now build the index data
@@ -67,22 +68,16 @@ public class App {
     }
 
     
-    static void startJogl(){
+    static void startJogl(String shaderFolder) {
     	try {
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
-					GLFrame testFormulaFrm = new GLFrame();
-					testFormulaFrm.setVisible(true);
-				}
+			SwingUtilities.invokeAndWait(() -> {
+				GLFrame testFormulaFrm = new GLFrame(shaderFolder);
+				testFormulaFrm.setVisible(true);
 			});
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+		} catch (InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
 		}
-    }
+	}
     
     public static void startAWT(){
     	LabFrame frm = new LabFrame();

@@ -1,7 +1,7 @@
 package nautilus.game.model;
 
 import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.math.Matrix4;
+import simplemath.math.Matrix4;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

@@ -8,18 +8,15 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
 public class Coordinator3D {
-    private float[] axesVertices = new float[]{
+    private final float[] axesVertices = new float[]{
             0, 0, 0, 1, 0, 0, 1,	1, 0, 0, 1, 0, 0, 1,
             0, 0, 0, 0, 1, 0, 1,	0, 1, 0, 0, 1, 0, 1,
             0, 0, 0, 0, 0, 1, 1,	0, 0, 1, 0, 0, 1, 1
     };
-    private int[] buffers = new int[1];
+    private final int[] buffers = new int[1];
     private final int STRIDE = 7 * Buffers.SIZEOF_FLOAT;
 
-    public void initialize(GL3 gl3,
-                           int posHandler,
-                           int colorHdl,
-                           int useTextureHandler) {
+    public void initialize(GL3 gl3, int posHandler, int colorHdl, int useTextureHandler) {
         gl3.glGenBuffers(1, buffers, 0);
         //init vertex buffer
         int size = axesVertices.length * Buffers.SIZEOF_FLOAT; //BYTES_PER_FLOAT
@@ -43,10 +40,7 @@ public class Coordinator3D {
     private int colorHandler;
     private int useTextureHandler;
 
-    public void setHandlers(int posHandler,
-                            int colorHdl,
-                            int textureHandler,
-                            int normalHandler) {
+    public void setHandlers(int posHandler, int colorHdl, int textureHandler, int normalHandler) {
         positionHandler = posHandler;
         colorHandler = colorHdl;
         useTextureHandler = textureHandler;

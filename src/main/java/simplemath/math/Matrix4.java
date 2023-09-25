@@ -3,7 +3,7 @@ package simplemath.math;
 /**
  * This matrix use column-major order
  * @author vdao5
- *
+ * @deprecated Please use matrix from OpenGL
  */
 public class Matrix4 {
 	

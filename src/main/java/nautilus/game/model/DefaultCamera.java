@@ -2,6 +2,9 @@ package nautilus.game.model;
 
 import simplemath.math.Matrix4;
 
+/**
+ * @deprecated Please use camera API from OpenGL and GLM instead
+ */
 public class DefaultCamera {
 
     private float eyeX;
@@ -76,7 +79,7 @@ public class DefaultCamera {
     public void setPerspectiveMatrix(float near, float far, float w, float h) {
 
         float range = near - far;
-        float aspect = (w*1.0f)/h;
+        float aspect = (w)/h;
         float fovy = (float)Math.tan(0.5 * (Math.PI - Math.toRadians(40)));
 
         mPerspectiveMatrix[0] = fovy / aspect;
