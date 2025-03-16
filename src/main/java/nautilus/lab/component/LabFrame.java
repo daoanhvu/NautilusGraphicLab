@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class LabFrame extends Frame{
+public class LabFrame extends Frame {
 
 	private MenuBar mainMenu;
 	private ToolBar mainToolBar;

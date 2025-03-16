@@ -43,6 +43,7 @@ JNIEXPORT void JNICALL Java_nautilus_lab_graphics_Camera3D_lookAt__JFFFFFFFFF_3F
  */
 JNIEXPORT void JNICALL Java_nautilus_lab_graphics_Camera3D_lookAt__J_3F_3F_3F_3F(JNIEnv *env, jobject thiz,
 		jlong address, jfloatArray eye, jfloatArray center, jfloatArray up, jfloatArray view) {
+
 	fp::Camera *c = (fp::Camera*)address;
 
 	jfloat *pEye = env->GetFloatArrayElements(eye, 0);

@@ -3,7 +3,7 @@ package nautilus.lab.graphics;
 public class Camera3D {
 	
 	static {
-		System.loadLibrary("nmath");
+		System.loadLibrary("jni_nmath");
 	}
 	
 	private long nativeCamera = 0;

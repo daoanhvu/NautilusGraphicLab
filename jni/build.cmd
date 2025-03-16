@@ -17,3 +17,5 @@ cl /O2 /EHcs -D_WIN32 /I%JAVA_HOME%\include /I%JAVA_HOME%\include\win32 ^
     jnicamera.cpp ^
     jnifunction.cpp ^
     /link /OUT:nmath.dll
+
+cmake .. -DNMATH_SOURCE_DIR=/Users/vudao/projects/libnmath

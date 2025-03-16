@@ -3,15 +3,22 @@ package nautilus.lab.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jogamp.opengl.GL3;
 import nautilus.lab.graphics.Camera3D;
 import nautilus.lab.graphics.IGraphics;
 import nautilus.lab.graphics.IPaint;
 
 public class SingleModel extends Model3D {
 	protected ArrayList<VertexItem> vertices = new ArrayList<VertexItem>();
+
+	protected float[] primitiveVertices;
 	
 	public void addVertice(VertexItem vertex){
 		vertices.add(vertex);
+	}
+
+	public void initialize() {
+
 	}
 	
 	public void addVertices(VertexItem[] vertices_){
@@ -35,6 +42,11 @@ public class SingleModel extends Model3D {
 	public void draw(Camera3D camera, IGraphics g, IPaint paint) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void draw(GL3 gl3, int posHandler, int normalHandler, int colorHandler, int textureHandler) {
+
 	}
 
 	@Override

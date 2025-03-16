@@ -5,7 +5,7 @@ public class ImageData {
 	private int dimension = 0;
 	private float[] image = null;
 	private int[] rowsInfo = null;
-	private int normalOffset = -1;
+	private short normalOffset = -1;
 	private short[] indices;
 	
 	public int getVertexCount() {
@@ -13,7 +13,7 @@ public class ImageData {
 	}
 
 	public int[] getRowInfo() {
-		return null;
+		return rowsInfo;
 	}
 
 	public float[] getImage() {
@@ -24,4 +24,10 @@ public class ImageData {
 		return dimension;
 	}
 
+	public void generateIndices() {
+		indices = new short[image.length];
+		for(int i=0; i<image.length; i++) {
+			indices[i] = (short) i;
+		}
+	}
 }

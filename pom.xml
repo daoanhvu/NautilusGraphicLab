@@ -6,28 +6,38 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <name>NautilusGraphicLab</name>
-    <url>http://maven.apache.org</url>
+
+    <repositories>
+        <repository>
+            <id>jogamp</id>
+            <name>JogAmp Repository</name>
+            <layout>default</layout>
+            <url>https://jogamp.org/deployment/maven/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <properties>
         <lib.directory>${project.build.directory}/lib</lib.directory>
         <argLine>-Dfile.encoding=UTF-8</argLine>
+        <jogl.version>2.5.0</jogl.version>
     </properties>
 
     <dependencies>
-
+        <!-- https://mvnrepository.com/artifact/org.jogamp.jogl/jogl-all -->
         <dependency>
             <groupId>org.jogamp.jogl</groupId>
-            <artifactId>jogl-all</artifactId>
-            <version>2.3.2</version>
+            <artifactId>jogl-all-main</artifactId>
+            <version>2.5.0</version>
         </dependency>
-
+        <!-- https://mvnrepository.com/artifact/org.jogamp.gluegen/gluegen-rt -->
         <dependency>
             <groupId>org.jogamp.gluegen</groupId>
-            <artifactId>gluegen-rt</artifactId>
-            <version>2.3.2</version>
+            <artifactId>gluegen-rt-main</artifactId>
+            <version>${jogl.version}</version>
         </dependency>
-
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -99,8 +109,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
+                    <source>17</source>
+                    <target>17</target>
                 </configuration>
             </plugin>
         </plugins>

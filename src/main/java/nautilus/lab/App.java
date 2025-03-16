@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class App {
     public static void main(String[] args) {
-		String shaderFolder = "";
+		String shaderFolder = "/Users/vudao/projects/NautilusGraphicLab/shaders";
 		if(args.length > 0) {
 			shaderFolder = args[0];
 		}
@@ -67,8 +67,8 @@ public class App {
     }
 
     
-    static void startJogl(String shaderFolder) {
-    	try {
+	static void startJogl(String shaderFolder) {
+		try {
 			SwingUtilities.invokeAndWait(() -> {
 				GLFrame testFormulaFrm = new GLFrame(shaderFolder);
 				testFormulaFrm.setVisible(true);

@@ -11,6 +11,7 @@ import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.util.FPSAnimator;
 import nautilus.lab.component.CommandListener;
 import nautilus.lab.component.Scene3D;
+import nautilus.lab.model.Model3D;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -52,6 +53,8 @@ public class NLabScene extends Scene3D implements CommandListener {
 	private float preMouseX;
 	private float preMouseY;
 	Quaternion currentRotation = new Quaternion();
+
+	protected Model3D modelObject = null;
 
 	public NLabScene(String shaderScriptFolder, GLCapabilities caps) {
 		super(caps);
@@ -144,7 +147,9 @@ public class NLabScene extends Scene3D implements CommandListener {
 				//Setting LightSource source
 				gl3.glUniform1i(uNumOfLightHandler, lightSources.size());
 
+				/* Drawing the coordinator */
 				coord.render(gl3);
+				modelObject.draw(gl3, positionHandler, normalHandler, colorHandler, textureHandler);
 
 				gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
 				gl3.glDisableVertexAttribArray(positionHandler);
@@ -217,7 +222,7 @@ public class NLabScene extends Scene3D implements CommandListener {
 		
 		mModel.loadIdentity();
 		mRotationMatrix.loadIdentity();
-        coord = new Coordinator3D();
+		coord = new Coordinator3D();
 		animator = new FPSAnimator(this, FPS_INTERVAL, true);
 	}
 

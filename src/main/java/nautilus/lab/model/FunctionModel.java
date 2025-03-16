@@ -11,7 +11,7 @@ import simplemath.math.Function;
 import simplemath.math.ImageData;
 import static nautilus.lab.formula.Constant.NO_ERROR;
 
-public class FunctionModel extends SingleModel{
+public class FunctionModel extends SingleModel {
 
 	private Function function = null;
 	
@@ -28,8 +28,9 @@ public class FunctionModel extends SingleModel{
 		if(function.setString(strFunction) == NO_ERROR){
 			boundaries = _boundaries;
 			function.getSpace(boundaries, 0.1f, false, imageData);
-		}else
+		} else {
 			updating = true;
+		}
 	}
 	
 	@Override
