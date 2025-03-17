@@ -27,7 +27,7 @@ Java_simplemath_math_Function_jniCalc(JNIEnv *env, jobject thiz, jlong address, 
 
 JNIEXPORT jint JNICALL Java_simplemath_math_Function_jniGetSpace(JNIEnv *env, jobject thiz, jlong nativeAddress,
         jfloatArray boundaries, jfloat epsilon,
-        jboolean isNormal, jobjectArray resultSpaces);
+        jboolean isNormal, jobject resultSpaces);
 
 JNIEXPORT jint JNICALL Java_simplemath_math_Function_jniGetDerivative(JNIEnv *env, jobject thiz, jlong nativeAddress);
 

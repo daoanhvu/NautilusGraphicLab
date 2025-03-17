@@ -11,6 +11,7 @@ import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.util.FPSAnimator;
 import nautilus.lab.component.CommandListener;
 import nautilus.lab.component.Scene3D;
+import nautilus.lab.model.FunctionModel;
 import nautilus.lab.model.Model3D;
 
 import java.awt.event.MouseEvent;
@@ -88,6 +89,9 @@ public class NLabScene extends Scene3D implements CommandListener {
 				bindAttributeLocations(gl3);
 				bindUniformHandlers(gl3);
 				coord.initialize(gl3, positionHandler, colorHandler, uUseTextureHandler);
+				if (modelObject != null) {
+					modelObject.initGL(gl3, positionHandler, colorHandler, normalHandler, textureHandler);
+				}
 			}
 
 			@Override
@@ -124,8 +128,10 @@ public class NLabScene extends Scene3D implements CommandListener {
 
 			@Override
 			public void dispose(GLAutoDrawable drawable) {
-
 				GL3 gl3 = drawable.getGL().getGL3();
+				if (modelObject != null) {
+					modelObject.dispose(gl3);
+				}
 				gl3.glUseProgram(0);
 				mProgramShader.dispose(gl3);
 			}
@@ -149,7 +155,9 @@ public class NLabScene extends Scene3D implements CommandListener {
 
 				/* Drawing the coordinator */
 				coord.render(gl3);
-				modelObject.draw(gl3, positionHandler, normalHandler, colorHandler, textureHandler);
+				if (modelObject != null) {
+					modelObject.draw(gl3, positionHandler, normalHandler, colorHandler, textureHandler);
+				}
 
 				gl3.glBindBuffer(GL3.GL_ARRAY_BUFFER, 0);
 				gl3.glDisableVertexAttribArray(positionHandler);
@@ -193,7 +201,7 @@ public class NLabScene extends Scene3D implements CommandListener {
 		});
 		
 		addMouseMotionListener(new MouseMotionListener() {
-			final float sensitivity = 0.1f;
+			final float sensitivity = 0.05f;
 			public void mouseMoved(MouseEvent evt){
 			}
 
@@ -238,7 +246,11 @@ public class NLabScene extends Scene3D implements CommandListener {
 
 	@Override
 	public void onNFunctionChange(String strFunct, float[] boundaries) {
-
+		if (modelObject == null) {
+			modelObject = new FunctionModel(strFunct, boundaries);
+		} else {
+			((FunctionModel)modelObject).setFunction(strFunct, boundaries);
+		}
 	}
 
 	@Override

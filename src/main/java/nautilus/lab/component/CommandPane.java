@@ -22,6 +22,10 @@ public class CommandPane extends JPanel {
     setPreferredSize(new Dimension(400, 48));
     this.setLayout(new BorderLayout());
     txtCommand = new JTextField();
+
+    // for testing purpose
+    txtCommand.setText("f(x,y) = x^2 + y");
+
     txtCommand.addKeyListener(keyListener);
     add(txtCommand, BorderLayout.CENTER);
     try {
@@ -45,7 +49,7 @@ public class CommandPane extends JPanel {
     public void keyReleased(KeyEvent evt) {
       if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
         String command = txtCommand.getText();
-        commandListener.onNFunctionChange(command, new float[]{});
+        commandListener.onNFunctionChange(command, new float[]{-1, 1, -1, 1});
       }
     }
 

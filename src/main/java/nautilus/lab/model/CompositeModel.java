@@ -20,6 +20,13 @@ public class CompositeModel extends Model3D {
 	}
 
 	@Override
+	public void initGL(GL3 gl3, int posHandler, int colorHdl, int normalHandler, int useTextureHandler) {
+		for (Model3D mdl : subModels) {
+			mdl.initGL(gl3, posHandler, colorHdl, normalHandler, useTextureHandler);
+		}
+	}
+
+	@Override
 	public void draw(Camera3D camera, IGraphics g, IPaint paint) {
 		// TODO Auto-generated method stub
 	}
@@ -33,5 +40,12 @@ public class CompositeModel extends Model3D {
 	public void save(String fileName) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void dispose(GL3 gl3) {
+		for(Model3D mdl : subModels){
+			mdl.dispose(gl3);
+		}
 	}
 }

@@ -1,25 +1,17 @@
 package nautilus.lab.component;
 
-import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Toolkit;
 import java.awt.AlphaComposite;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.ComponentListener;
 import java.awt.event.ComponentEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.Image;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import nautilus.lab.common.ImageUtility;
 import nautilus.lab.graphics.Camera3D;
@@ -246,7 +238,7 @@ public class StrategyCanvas extends AbstractStrategyCanvas {
 
 	@Override
 	public void onNFunctionChange(String strFunct, float[] boundaries) {
-		if(testModel != null){
+		if(testModel != null) {
 			((FunctionModel)testModel).setFunction(strFunct, boundaries);
 		}
 	}
